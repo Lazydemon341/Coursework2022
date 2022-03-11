@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/usage_stats"
+      android:enabled="true"
+      android:icon="@drawable/ic_baseline_apps_24"
+      android:title="UsageStats" />
+  <item
+      android:id="@+id/focus_mode"
+      android:enabled="true"
+      android:icon="@drawable/ic_baseline_apps_24"
+      android:title="FocusMode" />
+  <item
+      android:id="@+id/black_list"
+      android:enabled="true"
+      android:icon="@drawable/ic_baseline_apps_24"
+      android:title="BlackList" />
+</menu>

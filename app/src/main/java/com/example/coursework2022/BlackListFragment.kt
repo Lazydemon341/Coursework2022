@@ -1,0 +1,86 @@
+package com.example.coursework2022
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.viewModels
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
+import androidx.preference.Preference.OnPreferenceChangeListener
+import androidx.preference.Preference.OnPreferenceClickListener
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import com.example.coursework2022.R.string
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.HashSet
+import javax.inject.Inject
+
+
+@AndroidEntryPoint
+class BlackListFragment : PreferenceFragmentCompat() {
+
+  private val viewModel: BlackListViewModel by viewModels()
+
+  @Inject
+  lateinit var preferenceStorage: PreferenceStorage
+
+  override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    addPreferencesFromResource(R.xml.pref_black_list_apps)
+
+    val preferenceCategory = findPreference(getString(string.pref_black_list_key)) as PreferenceCategory?
+    preferenceCategory?.let { setUpAllApps(it) }
+  }
+
+  @SuppressLint("QueryPermissionsNeeded")
+  private fun setUpAllApps(preferenceCategory: PreferenceCategory) {
+    val packageManager = requireActivity().packageManager
+    val main = Intent(Intent.ACTION_MAIN, null)
+    main.addCategory(Intent.CATEGORY_LAUNCHER);
+    val apps = packageManager.queryIntentActivities(main, 0)
+      .distinctBy {
+        it.activityInfo.packageName
+      }.sortedBy {
+        it.activityInfo.loadLabel(packageManager).toString()
+      }
+    for (app in apps) {
+      val label = app.activityInfo.loadLabel(packageManager)
+      if (!isThisApp(label)) {
+        val icon: Drawable = app.activityInfo.loadIcon(packageManager)
+        val packageName = app.activityInfo.packageName
+        val checkBoxPref = CheckBoxPreference(requireContext())
+        checkBoxPref.title = label
+        checkBoxPref.key = packageName
+        checkBoxPref.icon = icon
+        checkBoxPref.isChecked = false
+        checkBoxPref.onPreferenceClickListener = OnPreferenceClickListener { preference ->
+          if (preference is CheckBoxPreference) {
+            changeBlacklistApps(preference.key, preference.isChecked)
+            return@OnPreferenceClickListener true
+          }
+          return@OnPreferenceClickListener false
+        }
+        preferenceCategory.addPreference(checkBoxPref)
+      }
+    }
+  }
+
+  private fun changeBlacklistApps(packageName: String, inBlacklist: Boolean) {
+    if (inBlacklist) {
+      preferenceStorage.addBlackListApp(packageName)
+    } else {
+      preferenceStorage.removeBlackListApp(packageName)
+    }
+  }
+
+  private fun isThisApp(label: CharSequence): Boolean {
+    return label == resources.getString(string.app_name)
+  }
+
+  companion object {
+    fun newInstance() = BlackListFragment()
+  }
+}

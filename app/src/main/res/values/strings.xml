@@ -1,0 +1,20 @@
+<resources>
+  <string name="app_name">Coursework2022</string>
+  <string name="detection_service_description">This service helps to detect any apps that is on the foreground.
+    \nPlease enable it so that FocusMode can function normally.</string>
+  <string name="pref_black_list_title">Apps that will be disabled during FocusMode</string>
+  <string name="pref_black_list_key" translatable="false">black_list_key</string>
+  <string name="app_not_allowed_msg">This app is not allowed in FocusMode</string>
+
+  <plurals name="times_launched">
+    <item quantity="one">Time Launched</item>
+    <item quantity="other">Times Launched</item>
+  </plurals>
+
+  <array name="duration">
+    <item>TODAY</item>
+    <item>YESTERDAY</item>
+    <item>WEEK</item>
+    <item>MONTH</item>
+  </array>
+</resources>
