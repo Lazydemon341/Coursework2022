@@ -1,7 +1,5 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="174">
-    <option name="USE_SAME_INDENTS" value="true" />
-    <option name="IGNORE_SAME_INDENTS_FOR_LANGUAGES" value="true" />
     <option name="OTHER_INDENT_OPTIONS">
       <value>
         <option name="INDENT_SIZE" value="2" />
@@ -48,9 +46,6 @@
       <option name="IMPORT_NESTED_CLASSES" value="true" />
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
-    <XML>
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-    </XML>
     <editorconfig>
       <option name="ENABLED" value="false" />
     </editorconfig>

@@ -2,21 +2,15 @@ package com.example.coursework2022
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.preference.CheckBoxPreference
-import androidx.preference.Preference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.example.coursework2022.R.string
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.HashSet
 import javax.inject.Inject
 
 
@@ -31,8 +25,7 @@ class BlackListFragment : PreferenceFragmentCompat() {
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.pref_black_list_apps)
 
-    val preferenceCategory = findPreference(getString(string.pref_black_list_key)) as PreferenceCategory?
-    preferenceCategory?.let { setUpAllApps(it) }
+    (findPreference(getString(string.pref_black_list_key)) as PreferenceCategory?)?.let { setUpAllApps(it) }
   }
 
   @SuppressLint("QueryPermissionsNeeded")
