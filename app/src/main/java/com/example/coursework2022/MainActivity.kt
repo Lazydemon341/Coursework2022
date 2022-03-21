@@ -12,10 +12,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+    setupBottomNav()
+    checkPermissions()
+  }
 
+  private fun setupBottomNav() {
     findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
       setOnItemSelectedListener { item ->
         when (item.itemId) {
@@ -42,15 +47,11 @@ class MainActivity : AppCompatActivity() {
       }
       selectedItemId = R.id.focus_mode
     }
-
-    if (ContextCompat.checkSelfPermission(this, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
-    ) {
-      ActivityCompat.requestPermissions(this, arrayOf(permission.READ_PHONE_STATE), 100)
-    }
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    App.focusModeOn = false
+  private fun checkPermissions() {
+    if (ContextCompat.checkSelfPermission(this, permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, arrayOf(permission.READ_PHONE_STATE), 100)
+    }
   }
 }

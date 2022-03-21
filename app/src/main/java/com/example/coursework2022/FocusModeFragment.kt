@@ -13,7 +13,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.coursework2022.service.FocusModeService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,10 +40,7 @@ class FocusModeFragment : Fragment() {
     button = view.findViewById(R.id.button)
     button.setOnClickListener {
       if (isAccessibilitySettingsOn(requireContext())) {
-        App.focusModeOn = true
-        val i = Intent(context, FocusModeService::class.java)
-        context?.startService(i)
-
+        preferenceStorage.setFocusModeStatus(true)
         Toast.makeText(requireContext(), "FocusMode has been started!", Toast.LENGTH_SHORT).show()
       } else {
         openAccessibilityService()
