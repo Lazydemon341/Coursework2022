@@ -25,7 +25,9 @@ class BlackListFragment : PreferenceFragmentCompat() {
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.pref_black_list_apps)
 
-    (findPreference(getString(string.pref_black_list_key)) as PreferenceCategory?)?.let { setUpAllApps(it) }
+    (findPreference(getString(string.pref_black_list_key)) as PreferenceCategory?)?.let {
+      setUpAllApps(it)
+    }
   }
 
   @SuppressLint("QueryPermissionsNeeded")

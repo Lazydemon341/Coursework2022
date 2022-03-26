@@ -8,11 +8,24 @@
     tools:context=".FocusModeFragment"
     >
 
-  <Button
-      android:id="@+id/button"
+  <com.github.mikephil.charting.charts.PieChart
+      android:id="@+id/pie_chart"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintBottom_toTopOf="@id/focus_mode_switch"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      />
+
+  <com.google.android.material.switchmaterial.SwitchMaterial
+      android:id="@+id/focus_mode_switch"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Start FocusMode"
+      android:scaleX="2"
+      android:scaleY="2"
+      android:textOff="Start FocusMode"
+      android:textOn="Disable FocusMode"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"

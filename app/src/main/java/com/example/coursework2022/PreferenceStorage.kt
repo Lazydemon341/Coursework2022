@@ -2,6 +2,9 @@ package com.example.coursework2022
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,10 +21,14 @@ class PreferenceStorage @Inject constructor(
 
   private val prefs = context.getSharedPreferences(BLACKLIST_PREFS_NAME, Context.MODE_PRIVATE)
 
+  private val _focusModeStatusFlow: MutableStateFlow<Boolean> = MutableStateFlow(getFocusModeStatus())
+  val focusModeStatusFlow: StateFlow<Boolean> = _focusModeStatusFlow.asStateFlow()
+
   fun setFocusModeStatus(on: Boolean) {
     prefs.edit()
       .putBoolean(KEY_FOCUS_MODE, on)
       .apply()
+    _focusModeStatusFlow.value = on
   }
 
   fun getFocusModeStatus(): Boolean {

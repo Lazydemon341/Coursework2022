@@ -18,6 +18,11 @@ import com.example.coursework2022.MainActivity
 import com.example.coursework2022.PreferenceStorage
 import com.example.coursework2022.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,6 +32,7 @@ class DetectionService : AccessibilityService() {
   lateinit var preferenceStorage: PreferenceStorage
 
   private var isForeground = false
+  private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     return Service.START_STICKY
@@ -34,12 +40,15 @@ class DetectionService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    updateForeground(preferenceStorage.getFocusModeStatus())
+    scope.launch {
+      preferenceStorage.focusModeStatusFlow.collect {
+        updateForeground(it)
+      }
+    }
   }
 
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
     val focusModeOn = preferenceStorage.getFocusModeStatus()
-    updateForeground(focusModeOn)
     if (focusModeOn && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
       event.packageName?.toString()?.let { killAppIfInBlacklist(it) }
     }
@@ -66,6 +75,7 @@ class DetectionService : AccessibilityService() {
       isForeground = true
     } else if (!focusModeOn && isForeground) {
       stopForeground(true)
+      isForeground = false
     }
   }
 
