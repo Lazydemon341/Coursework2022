@@ -22,9 +22,12 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.RIGHT
 import com.github.mikephil.charting.components.Legend.LegendOrientation.VERTICAL
 import com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,7 +79,7 @@ class FocusModeFragment : Fragment() {
   }
 
   private fun setupChart(view: View) {
-    var chart: PieChart = view.findViewById(R.id.pie_chart)
+    val chart: PieChart = view.findViewById(R.id.pie_chart)
 
     chart.description.isEnabled = false
 
@@ -98,7 +101,7 @@ class FocusModeFragment : Fragment() {
     chart.data = generatePieData()
   }
 
-  private fun generateCenterText(): SpannableString? {
+  private fun generateCenterText(): SpannableString {
     val s = SpannableString("Revenues\nQuarters 2015")
     s.setSpan(RelativeSizeSpan(2f), 0, 8, 0)
     s.setSpan(ForegroundColorSpan(Color.GRAY), 8, s.length, 0)
@@ -111,6 +114,7 @@ class FocusModeFragment : Fragment() {
     for (i in 0 until count) {
       entries1.add(PieEntry((Math.random() * 60 + 40).toFloat(), "Quarter " + (i + 1)).apply {
         icon = drawable(R.drawable.ic_baseline_apps_24)
+        //data = TODO()
       })
     }
     val ds1 = PieDataSet(entries1, "Quarterly Revenues 2015")

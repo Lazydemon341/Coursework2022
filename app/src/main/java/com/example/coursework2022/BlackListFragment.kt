@@ -35,31 +35,26 @@ class BlackListFragment : PreferenceFragmentCompat() {
     val packageManager = requireActivity().packageManager
     val main = Intent(Intent.ACTION_MAIN, null)
     main.addCategory(Intent.CATEGORY_LAUNCHER);
-    val apps = packageManager.queryIntentActivities(main, 0)
-      .distinctBy {
-        it.activityInfo.packageName
-      }.sortedBy {
-        it.activityInfo.loadLabel(packageManager).toString()
-      }
+    val apps = requireActivity().getAppsList().sortedBy {
+      it.activityInfo.loadLabel(packageManager).toString()
+    }
     for (app in apps) {
       val label = app.activityInfo.loadLabel(packageManager)
-      if (!isThisApp(label)) {
-        val icon: Drawable = app.activityInfo.loadIcon(packageManager)
-        val packageName = app.activityInfo.packageName
-        val checkBoxPref = CheckBoxPreference(requireContext())
-        checkBoxPref.title = label
-        checkBoxPref.key = packageName
-        checkBoxPref.icon = icon
-        checkBoxPref.isChecked = false
-        checkBoxPref.onPreferenceClickListener = OnPreferenceClickListener { preference ->
-          if (preference is CheckBoxPreference) {
-            changeBlacklistApps(preference.key, preference.isChecked)
-            return@OnPreferenceClickListener true
-          }
-          return@OnPreferenceClickListener false
+      val icon: Drawable = app.activityInfo.loadIcon(packageManager)
+      val packageName = app.activityInfo.packageName
+      val checkBoxPref = CheckBoxPreference(requireContext())
+      checkBoxPref.title = label
+      checkBoxPref.key = packageName
+      checkBoxPref.icon = icon
+      checkBoxPref.isChecked = false
+      checkBoxPref.onPreferenceClickListener = OnPreferenceClickListener { preference ->
+        if (preference is CheckBoxPreference) {
+          changeBlacklistApps(preference.key, preference.isChecked)
+          return@OnPreferenceClickListener true
         }
-        preferenceCategory.addPreference(checkBoxPref)
+        return@OnPreferenceClickListener false
       }
+      preferenceCategory.addPreference(checkBoxPref)
     }
   }
 
@@ -69,10 +64,6 @@ class BlackListFragment : PreferenceFragmentCompat() {
     } else {
       preferenceStorage.removeBlackListApp(packageName)
     }
-  }
-
-  private fun isThisApp(label: CharSequence): Boolean {
-    return label == resources.getString(string.app_name)
   }
 
   companion object {
