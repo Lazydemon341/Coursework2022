@@ -1,11 +1,13 @@
-package com.example.coursework2022
+package com.example.coursework2022.utils
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import bot.box.appusage.utils.UsageUtils
 import com.example.coursework2022.R.mipmap
@@ -15,9 +17,8 @@ fun Context.drawable(@DrawableRes res: Int): Drawable? {
   return AppCompatResources.getDrawable(this, res)
 }
 
-fun Fragment.drawable(@DrawableRes res: Int): Drawable? {
-  return AppCompatResources.getDrawable(requireContext(), res)
-}
+fun Fragment.drawable(@DrawableRes res: Int): Drawable? =
+  requireContext().drawable(res)
 
 fun Context.appLabel(packageName: String): String {
   try {
@@ -31,7 +32,7 @@ fun Context.appLabel(packageName: String): String {
 fun Fragment.appLabel(packageName: String): String =
   requireContext().appLabel(packageName)
 
-fun appLabel(packageName: String): Drawable? =
+fun appIcon(packageName: String): Drawable? =
   UsageUtils.parsePackageIcon(packageName, mipmap.ic_launcher)
 
 fun Context.getAppsList(): List<ResolveInfo> {
@@ -45,3 +46,6 @@ fun Context.getAppsList(): List<ResolveInfo> {
       it.activityInfo.packageName
     }
 }
+
+fun Context.isPermissionGranted(permission: String): Boolean =
+  ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED

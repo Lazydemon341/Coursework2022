@@ -10,6 +10,7 @@ import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.example.coursework2022.R.string
+import com.example.coursework2022.utils.getAppsList
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

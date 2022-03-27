@@ -57,35 +57,13 @@
         />
 
     <TextView
-        android:id="@+id/app_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_name"
-        android:layout_alignStart="@+id/app_name"
-        android:textSize="12sp"
-        />
-
-    <TextView
         android:id="@+id/launch_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/app_time"
+        android:layout_below="@+id/app_usage"
         android:layout_alignStart="@+id/app_name"
         android:layout_marginTop="4dp"
         android:textSize="12sp"
         />
-
-
-    <TextView
-        android:id="@+id/data_used"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_time"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="4dp"
-        android:layout_toEndOf="@id/launch_count"
-        android:textSize="12sp"
-        />
-
   </RelativeLayout>
 </androidx.cardview.widget.CardView>
