@@ -4,20 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.SpinnerAdapter
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.example.coursework2022.R
+import com.google.android.material.button.MaterialButtonToggleGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -27,7 +25,7 @@ class UsageStatsFragment : Fragment() {
   private lateinit var mUsageListAdapter: UsageStatsAdapter
   private lateinit var mRecyclerView: RecyclerView
   private lateinit var mLayoutManager: RecyclerView.LayoutManager
-  private lateinit var mSpinner: Spinner
+  private lateinit var toggleButton: MaterialButtonToggleGroup
 
   private val viewModel: UsageStatsViewModel by viewModels()
 
@@ -39,12 +37,11 @@ class UsageStatsFragment : Fragment() {
     return inflater.inflate(R.layout.fragment_app_usage_statistics, container, false)
   }
 
-  override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(rootView, savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    mRecyclerView = rootView.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
+    mRecyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
     mRecyclerView.layoutManager = LinearLayoutManager(requireContext()).also { mLayoutManager = it }
-    mRecyclerView.scrollToPosition(0)
     mUsageListAdapter = UsageStatsAdapter().apply {
       setHasStableIds(true)
       registerAdapterDataObserver(object : AdapterDataObserver() {
@@ -74,15 +71,23 @@ class UsageStatsFragment : Fragment() {
       })
     }
     mRecyclerView.adapter = mUsageListAdapter
+    mRecyclerView.itemAnimator = object : DefaultItemAnimator() {
+      override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
+        return true
+      }
+    }
+    mRecyclerView.scrollToPosition(0)
 
-    mSpinner = rootView.findViewById<View>(R.id.spinner_time_span) as Spinner
-    val spinnerAdapter: SpinnerAdapter = ArrayAdapter.createFromResource(
-      requireActivity(),
-      R.array.action_list,
-      android.R.layout.simple_spinner_dropdown_item
-    )
-    mSpinner.adapter = spinnerAdapter
-    mSpinner.onItemSelectedListener = getOnSpinnerItemSelectedListener()
+    toggleButton = view.findViewById(R.id.toggle_button)
+    toggleButton.addOnButtonCheckedListener { _, idRes, checked ->
+      if (checked) {
+        val button = view.findViewById<Button>(idRes)
+        StatsUsageInterval.getValue(requireContext(), button.text.toString())?.let {
+          viewModel.getUsageStats(it)
+        }
+      }
+    }
+    toggleButton.check(R.id.button_daily)
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -93,16 +98,9 @@ class UsageStatsFragment : Fragment() {
     }
   }
 
-  private fun getOnSpinnerItemSelectedListener(): OnItemSelectedListener {
-    return object : OnItemSelectedListener {
-      var strings: Array<String> = resources.getStringArray(R.array.action_list)
-
-      override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        StatsUsageInterval.getValue(strings[position])?.let { viewModel.getUsageStats(it) }
-      }
-
-      override fun onNothingSelected(parent: AdapterView<*>?) {}
-    }
+  override fun onDestroyView() {
+    super.onDestroyView()
+    toggleButton.clearOnButtonCheckedListeners()
   }
 
   companion object {

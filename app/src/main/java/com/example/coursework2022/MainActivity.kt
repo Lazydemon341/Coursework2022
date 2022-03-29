@@ -15,6 +15,7 @@ import com.example.coursework2022.utils.isPermissionGranted
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

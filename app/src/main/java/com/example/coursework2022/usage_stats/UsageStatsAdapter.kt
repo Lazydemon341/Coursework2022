@@ -1,5 +1,7 @@
 package com.example.coursework2022.usage_stats
 
+import android.icu.text.DateFormat
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +12,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coursework2022.R
 import com.example.coursework2022.usage_stats.UsageStatsAdapter.ViewHolder
+import java.util.Date
 
 class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
+
+  val dateFormatter = DateFormat.getDateTimeInstance()
 
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
     return ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.item_app_usage, viewGroup, false))
@@ -34,7 +39,7 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
     fun bind(data: AppUsageInfo) {
       appName.text = data.appLabel
       usage.text = getUsageText(data.usageTimeSeconds)
-      launchCount.text = String.format("${data.launchesCount} times")
+      launchCount.text = dateFormatter.format(Date(data.lastTimeUsedMillis))
       appIcon.setImageDrawable(data.appIcon)
     }
 

@@ -1,20 +1,31 @@
 package com.example.coursework2022.usage_stats
 
-import android.app.usage.UsageStatsManager
+import android.content.Context
+import android.icu.util.Calendar
+import androidx.annotation.StringRes
+import com.example.coursework2022.R
+import com.example.coursework2022.utils.getLastMidnight
+import com.example.coursework2022.utils.getNextMidnightMillis
 
-enum class StatsUsageInterval(val mStringRepresentation: String, val mInterval: Int) {
-  DAILY("Daily", UsageStatsManager.INTERVAL_DAILY),
-  WEEKLY("Weekly", UsageStatsManager.INTERVAL_WEEKLY),
-  MONTHLY("Monthly", UsageStatsManager.INTERVAL_MONTHLY);
+enum class StatsUsageInterval(@StringRes val titleId: Int) {
+  DAILY(R.string.interval_daily),
+  WEEKLY(R.string.interval_weekly);
+
+  fun getStartTime(): Long {
+    val date = when (this) {
+      DAILY -> getLastMidnight()
+      WEEKLY -> getLastMidnight().apply { add(Calendar.DAY_OF_MONTH, -7) }
+    }
+    return date.timeInMillis
+  }
+
+  fun getEndTime(): Long {
+    return getNextMidnightMillis()
+  }
 
   companion object {
-    fun getValue(stringRepresentation: String): StatsUsageInterval? {
-      for (statsUsageInterval in values()) {
-        if (statsUsageInterval.mStringRepresentation == stringRepresentation) {
-          return statsUsageInterval
-        }
-      }
-      return null
+    fun getValue(context: Context, title: String): StatsUsageInterval? {
+      return values().firstOrNull { context.resources.getString(it.titleId) == title }
     }
   }
 }

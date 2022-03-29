@@ -11,10 +11,12 @@
     <item quantity="other">Times Launched</item>
   </plurals>
 
-  <string-array name="action_list">
-    <item>Daily</item>
-    <item>Weekly</item>
-    <item>Monthly</item>
+  <string name="interval_daily">Daily</string>
+  <string name="interval_weekly">Weekly</string>
+
+  <string-array name="usage_intervals">
+    <item>@string/interval_daily</item>
+    <item>@string/interval_weekly</item>
   </string-array>
 
   <string name="open_app_usage_setting">Open Apps with usage access settings</string>

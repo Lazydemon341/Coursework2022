@@ -6,8 +6,6 @@ import android.content.Context
 import com.example.coursework2022.utils.appIcon
 import com.example.coursework2022.utils.appLabel
 import com.example.coursework2022.utils.getAppsList
-import com.example.coursework2022.utils.getLastMidnightMillis
-import com.example.coursework2022.utils.getNextMidnightMillis
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +46,7 @@ class UsageStatsProvider @Inject constructor(
 
   private suspend fun getAndSaveUsageStats(interval: StatsUsageInterval): List<AppUsageInfo> {
     return withContext(Dispatchers.Default) {
-      getUsageStatsInternal(getLastMidnightMillis(), getNextMidnightMillis())
+      getUsageStatsInternal(interval.getStartTime(), interval.getEndTime())
         .filter {
           it.usageTimeSeconds > 0 || it.launchesCount > 0
         }

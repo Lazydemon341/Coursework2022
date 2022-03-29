@@ -12,7 +12,6 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -27,7 +26,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,7 +38,7 @@ class FocusModeFragment : Fragment() {
   @Inject
   lateinit var preferenceStorage: PreferenceStorage
 
-  private lateinit var focusModeSwitch: SwitchMaterial
+  private lateinit var focusModeButton: FocusModeButton
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -58,20 +56,16 @@ class FocusModeFragment : Fragment() {
 
   @SuppressLint("ClickableViewAccessibility")
   private fun setupSwitch(view: View) {
-    focusModeSwitch = view.findViewById(R.id.focus_mode_switch)
-    focusModeSwitch.isChecked = preferenceStorage.getFocusModeStatus() && isAccessibilitySettingsOn(requireContext())
-    focusModeSwitch.setOnTouchListener { v, event ->
-      if (event.action == MotionEvent.ACTION_DOWN) {
-        if (!(v as SwitchMaterial).isChecked && !isAccessibilitySettingsOn(requireContext())) {
-          openAccessibilityService()
-          return@setOnTouchListener true
-        }
+    focusModeButton = view.findViewById(R.id.focus_mode_button)
+    focusModeButton.isEnabled = isAccessibilitySettingsOn(requireContext())
+    focusModeButton.setOnTouchDisabledListener {
+      if (!isAccessibilitySettingsOn(requireContext())) {
+        openAccessibilityService()
       }
-      return@setOnTouchListener false
     }
-    focusModeSwitch.setOnCheckedChangeListener { _, checked ->
-      preferenceStorage.setFocusModeStatus(checked)
-      val msg = if (checked) "FocusMode has been started!" else "FocusMode has been disabled"
+    focusModeButton.setOnClickListener {
+      preferenceStorage.setFocusModeStatus(true)
+      val msg = if (true) "FocusMode has been started!" else "FocusMode has been disabled"
       Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
   }
