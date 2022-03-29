@@ -4,28 +4,15 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog.Builder
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.Secure
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.coursework2022.utils.drawable
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.RIGHT
-import com.github.mikephil.charting.components.Legend.LegendOrientation.VERTICAL
-import com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,21 +37,27 @@ class FocusModeFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    setupSwitch(view)
+    setupFocusButton(view)
   }
 
   @SuppressLint("ClickableViewAccessibility")
-  private fun setupSwitch(view: View) {
+  private fun setupFocusButton(view: View) {
     focusModeButton = view.findViewById(R.id.focus_mode_button)
     focusModeButton.isEnabled = isAccessibilitySettingsOn(requireContext())
+    focusModeButton.text =
+      if (preferenceStorage.getFocusModeStatus() && isAccessibilitySettingsOn(requireContext()))
+        "Stop FocusMode"
+      else
+        "Start FocusMode"
     focusModeButton.setOnTouchDisabledListener {
       if (!isAccessibilitySettingsOn(requireContext())) {
         openAccessibilityService()
       }
     }
     focusModeButton.setOnClickListener {
-      preferenceStorage.setFocusModeStatus(true)
-      val msg = if (true) "FocusMode has been started!" else "FocusMode has been disabled"
+      val focusModeOn = !preferenceStorage.getFocusModeStatus()
+      preferenceStorage.setFocusModeStatus(focusModeOn)
+      val msg = if (focusModeOn) "FocusMode has been started!" else "FocusMode has been disabled"
       Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
   }
