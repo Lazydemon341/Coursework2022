@@ -1,31 +1,32 @@
 package com.example.coursework2022.utils
 
-import java.util.Calendar
-import java.util.GregorianCalendar
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
-fun getLastMidnightMillis(): Long =
-  getLastMidnight().timeInMillis
+private fun getLastMidnightUTCInternal(): ZonedDateTime {
+  // The timezones we'll need
+  val utc = ZoneId.of("UTC")
+  val defaultZone = ZoneId.systemDefault()
 
-fun getLastMidnight(): Calendar {
-  val midnight = GregorianCalendar().apply {
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-  }
-  return midnight
+  // Set the starting and ending times to be midnight in UTC time
+  return LocalDate.now().atStartOfDay(defaultZone).withZoneSameInstant(utc)
 }
 
-fun getNextMidnight(): Calendar {
-  val midnight = GregorianCalendar().apply {
-    set(Calendar.HOUR_OF_DAY, 0)
-    set(Calendar.MINUTE, 0)
-    set(Calendar.SECOND, 0)
-    set(Calendar.MILLISECOND, 0)
-    add(Calendar.DAY_OF_MONTH, 1)
-  }
-  return midnight
+fun getLastMidnightUTC(): Long {
+  // The timezones we'll need
+  val utc = ZoneId.of("UTC")
+  val defaultZone = ZoneId.systemDefault()
+
+  // Set the starting and ending times to be midnight in UTC time
+  return LocalDate.now().atStartOfDay(defaultZone).withZoneSameInstant(utc).toInstant().toEpochMilli()
 }
 
-fun getNextMidnightMillis(): Long =
-  getNextMidnight().timeInMillis
+fun getNextMidnightUTC(): Long {
+  // The timezones we'll need
+  val utc = ZoneId.of("UTC")
+  val defaultZone = ZoneId.systemDefault()
+
+  // Set the starting and ending times to be midnight in UTC time
+  return LocalDate.now().atStartOfDay(defaultZone).withZoneSameInstant(utc).plusDays(1).toInstant().toEpochMilli()
+}

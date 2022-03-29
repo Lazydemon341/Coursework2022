@@ -104,6 +104,7 @@ class UsageStatsFragment : Fragment() {
   }
 
   companion object {
+    const val NAME = "Usage stats"
     fun newInstance(): UsageStatsFragment {
       return UsageStatsFragment()
     }

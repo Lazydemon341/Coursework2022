@@ -4,23 +4,25 @@ import android.content.Context
 import android.icu.util.Calendar
 import androidx.annotation.StringRes
 import com.example.coursework2022.R
-import com.example.coursework2022.utils.getLastMidnight
-import com.example.coursework2022.utils.getNextMidnightMillis
+import com.example.coursework2022.utils.getLastMidnightUTC
+import com.example.coursework2022.utils.getNextMidnightUTC
 
 enum class StatsUsageInterval(@StringRes val titleId: Int) {
   DAILY(R.string.interval_daily),
   WEEKLY(R.string.interval_weekly);
 
   fun getStartTime(): Long {
-    val date = when (this) {
-      DAILY -> getLastMidnight()
-      WEEKLY -> getLastMidnight().apply { add(Calendar.DAY_OF_MONTH, -7) }
+    return when (this) {
+      DAILY -> getLastMidnightUTC()
+      WEEKLY -> Calendar.getInstance().apply {
+        timeInMillis = getLastMidnightUTC()
+        add(Calendar.DAY_OF_YEAR, -7)
+      }.timeInMillis
     }
-    return date.timeInMillis
   }
 
   fun getEndTime(): Long {
-    return getNextMidnightMillis()
+    return getNextMidnightUTC()
   }
 
   companion object {

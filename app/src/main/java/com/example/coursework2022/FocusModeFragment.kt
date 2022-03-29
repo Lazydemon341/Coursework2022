@@ -51,7 +51,6 @@ class FocusModeFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     setupSwitch(view)
-    setupChart(view)
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -68,53 +67,6 @@ class FocusModeFragment : Fragment() {
       val msg = if (true) "FocusMode has been started!" else "FocusMode has been disabled"
       Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
-  }
-
-  private fun setupChart(view: View) {
-    val chart: PieChart = view.findViewById(R.id.pie_chart)
-
-    chart.description.isEnabled = false
-
-    chart.centerText = generateCenterText()
-    chart.setCenterTextSize(10f)
-
-    // radius of the center hole in percent of maximum radius
-
-    // radius of the center hole in percent of maximum radius
-    chart.holeRadius = 45f
-    chart.transparentCircleRadius = 50f
-
-    val l = chart.legend
-    l.verticalAlignment = TOP
-    l.horizontalAlignment = RIGHT
-    l.orientation = VERTICAL
-    l.setDrawInside(false)
-
-    chart.data = generatePieData()
-  }
-
-  private fun generateCenterText(): SpannableString {
-    val s = SpannableString("Revenues\nQuarters 2015")
-    s.setSpan(RelativeSizeSpan(2f), 0, 8, 0)
-    s.setSpan(ForegroundColorSpan(Color.GRAY), 8, s.length, 0)
-    return s
-  }
-
-  private fun generatePieData(): PieData {
-    val count = 4
-    val entries1 = ArrayList<PieEntry>()
-    for (i in 0 until count) {
-      entries1.add(PieEntry((Math.random() * 60 + 40).toFloat(), "Quarter " + (i + 1)).apply {
-        icon = drawable(R.drawable.ic_baseline_apps_24)
-        //data = TODO()
-      })
-    }
-    val ds1 = PieDataSet(entries1, "Quarterly Revenues 2015")
-    ds1.setColors(*ColorTemplate.MATERIAL_COLORS)
-    ds1.sliceSpace = 2f
-    ds1.valueTextColor = Color.WHITE
-    ds1.valueTextSize = 12f
-    return PieData(ds1)
   }
 
   private fun isAccessibilitySettingsOn(context: Context): Boolean {
@@ -157,6 +109,7 @@ class FocusModeFragment : Fragment() {
   }
 
   companion object {
+    const val NAME = "Focus mode"
     fun newInstance() = FocusModeFragment()
   }
 }

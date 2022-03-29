@@ -10,11 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.commit
 import com.afollestad.materialdialogs.MaterialDialog
-import com.example.coursework2022.usage_stats.UsageStatsFragment
 import com.example.coursework2022.utils.isPermissionGranted
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val NUM_PAGES = 2
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -22,24 +21,8 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    setupBottomNav()
+    supportFragmentManager.commit { replace(R.id.container, ViewPagerFragment.newInstance()) }
     checkPermissions()
-  }
-
-  private fun setupBottomNav() {
-    findViewById<BottomNavigationView>(R.id.bottom_navigation).apply {
-      setOnItemSelectedListener { item ->
-        val fragment = when (item.itemId) {
-          R.id.usage_stats -> UsageStatsFragment.newInstance()
-          R.id.focus_mode -> FocusModeFragment.newInstance()
-          R.id.black_list -> BlackListFragment.newInstance()
-          else -> return@setOnItemSelectedListener false
-        }
-        supportFragmentManager.commit { replace(R.id.container, fragment) }
-        return@setOnItemSelectedListener true
-      }
-      selectedItemId = R.id.focus_mode
-    }
   }
 
   private fun checkPermissions() {

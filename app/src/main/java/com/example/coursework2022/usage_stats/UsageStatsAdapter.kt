@@ -39,7 +39,9 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
     fun bind(data: AppUsageInfo) {
       appName.text = data.appLabel
       usage.text = getUsageText(data.usageTimeSeconds)
-      launchCount.text = dateFormatter.format(Date(data.lastTimeUsedMillis))
+      if (data.lastTimeUsedMillis != null) {
+        launchCount.text = dateFormatter.format(Date(data.lastTimeUsedMillis))
+      }
       appIcon.setImageDrawable(data.appIcon)
     }
 
