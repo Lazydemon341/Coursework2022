@@ -57,7 +57,12 @@ class FocusModeFragment : Fragment() {
     focusModeButton.setOnClickListener {
       val focusModeOn = !preferenceStorage.getFocusModeStatus()
       preferenceStorage.setFocusModeStatus(focusModeOn)
-      val msg = if (focusModeOn) "FocusMode has been started!" else "FocusMode has been disabled"
+      focusModeButton.text =
+        if (focusModeOn)
+          "Stop FocusMode"
+        else
+          "Start FocusMode"
+      val msg = if (focusModeOn) "FocusMode has been started!" else "FocusMode has been stopped"
       Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
   }

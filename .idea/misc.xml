@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.31666666666666665" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/black_list_fragment.xml" value="0.2558876811594203" />
+        <entry key="app/src/main/res/layout/custom_marker_view.xml" value="0.189209726443769" />
         <entry key="app/src/main/res/layout/focus_mode_fragment.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/fragment_app_usage_statistics.xml" value="0.2444938989089149" />
         <entry key="app/src/main/res/layout/fragment_pager.xml" value="0.189209726443769" />

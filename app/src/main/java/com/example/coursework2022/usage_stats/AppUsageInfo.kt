@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 
 data class AppUsageInfo(
   val packageName: String,
-  val usageTimeSeconds: Int = 0,
+  val usageTimeSeconds: Long = 0,
   val launchesCount: Int = 0,
   val lastTimeUsedMillis: Long? = null,
   val appLabel: String = "",

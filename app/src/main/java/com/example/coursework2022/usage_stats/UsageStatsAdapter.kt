@@ -1,7 +1,6 @@
 package com.example.coursework2022.usage_stats
 
 import android.icu.text.DateFormat
-import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coursework2022.R
 import com.example.coursework2022.usage_stats.UsageStatsAdapter.ViewHolder
+import com.example.coursework2022.utils.formatTime
 import java.util.Date
 
 class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
@@ -38,26 +38,11 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
 
     fun bind(data: AppUsageInfo) {
       appName.text = data.appLabel
-      usage.text = getUsageText(data.usageTimeSeconds)
+      usage.text = formatTime(data.usageTimeSeconds)
       if (data.lastTimeUsedMillis != null) {
         launchCount.text = dateFormatter.format(Date(data.lastTimeUsedMillis))
       }
       appIcon.setImageDrawable(data.appIcon)
-    }
-
-    private fun getUsageText(usageTimeSeconds: Int): String {
-      val minutes = usageTimeSeconds / 60
-      return when {
-        minutes > 0 -> {
-          "$minutes min"
-        }
-        minutes == 0 && usageTimeSeconds > 0 -> {
-          "less than 1 min"
-        }
-        else -> {
-          "0 min"
-        }
-      }
     }
   }
 

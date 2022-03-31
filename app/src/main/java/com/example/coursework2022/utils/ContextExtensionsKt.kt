@@ -39,9 +39,9 @@ fun Context.getAppsList(): List<ResolveInfo> {
   val main = Intent(Intent.ACTION_MAIN, null)
   main.addCategory(Intent.CATEGORY_LAUNCHER);
   return packageManager.queryIntentActivities(main, 0)
-    .filter {
-      it.activityInfo.packageName != this.packageName
-    }
+//    .filter {
+//      it.activityInfo.packageName != this.packageName
+//    }
     .distinctBy {
       it.activityInfo.packageName
     }
