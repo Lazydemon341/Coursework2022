@@ -5,7 +5,7 @@
     <!-- Primary brand color. -->
     <item name="colorPrimary">#64dd17</item>
     <item name="colorPrimaryVariant">#1faa00</item>
-    <item name="colorOnPrimary">#000000</item>
+    <item name="colorOnPrimary">#FFFFFF</item>
     <!-- Secondary brand color. -->
     <item name="colorSecondary">#64dd17</item>
     <item name="colorSecondaryVariant">#1faa00</item>

@@ -31,6 +31,6 @@ class UsageStatsViewModel @Inject constructor(
   }
 
   fun getWeekUsage(): List<Long> {
-    return usageStatsProvider.weekUsageTime
+    return usageStatsProvider.getWeekUsageTime()
   }
 }

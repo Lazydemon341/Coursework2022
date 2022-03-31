@@ -13,15 +13,13 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.example.coursework2022.utils.isPermissionGranted
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val NUM_PAGES = 2
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    supportFragmentManager.commit { replace(R.id.container, AboutFragment.newInstance()) }
+    supportFragmentManager.commit { replace(R.id.container, ViewPagerFragment.newInstance()) }
     checkPermissions()
   }
 

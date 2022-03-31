@@ -43,7 +43,6 @@ class BarChartBuilder @Inject constructor() {
     chart.legend.isEnabled = false
     chart.axisRight.isEnabled = false
 
-
     val xAxis = chart.xAxis
     xAxis.position = BOTTOM
     xAxis.setDrawGridLines(false)

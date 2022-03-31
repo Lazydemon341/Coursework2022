@@ -29,7 +29,7 @@ class UsageStatsProvider @Inject constructor(
   private val usageStatsByInterval: MutableMap<StatsUsageInterval, List<AppUsageInfo>> = mutableMapOf()
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-  val weekUsageTime: ArrayList<Long> = arrayListOf()
+  private val weekUsageTime: ArrayList<Long> = arrayListOf()
   val usageStatsWeek: ArrayList<List<AppUsageInfo>> = arrayListOf()
 
   init {
@@ -41,6 +41,13 @@ class UsageStatsProvider @Inject constructor(
     scope.launch {
       getWeekUsageStats()
     }
+  }
+
+  fun getWeekUsageTime(): ArrayList<Long> {
+    if (weekUsageTime.isEmpty()) {
+      getWeekUsageStats()
+    }
+    return weekUsageTime
   }
 
   suspend fun getUsageStats(interval: StatsUsageInterval): List<AppUsageInfo> {

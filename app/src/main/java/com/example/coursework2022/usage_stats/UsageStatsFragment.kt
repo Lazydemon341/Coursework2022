@@ -1,11 +1,13 @@
 package com.example.coursework2022.usage_stats
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -17,13 +19,12 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
-import androidx.recyclerview.widget.RecyclerView.INVISIBLE
-import androidx.recyclerview.widget.RecyclerView.VISIBLE
 import com.example.coursework2022.R
 import com.example.coursework2022.charts.BarChartBuilder
 import com.example.coursework2022.charts.PieChartBuilder
 import com.example.coursework2022.usage_stats.StatsUsageInterval.DAILY
 import com.example.coursework2022.usage_stats.StatsUsageInterval.WEEKLY
+import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -50,6 +51,7 @@ class UsageStatsFragment : Fragment() {
   private lateinit var scrollView: NestedScrollView
   private lateinit var scrollIndicator: ImageView
   private lateinit var content: View
+  private lateinit var weeklyUsageTime: TextView
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -59,14 +61,15 @@ class UsageStatsFragment : Fragment() {
     return inflater.inflate(R.layout.fragment_app_usage_statistics, container, false)
   }
 
+  @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
     val pieChart = view.findViewById<PieChart>(R.id.pie_chart)
     pieChartBuilder.setupChart(pieChart)
 
-    val barchart = view.findViewById<BarChart>(R.id.bar_chart)
-    barChartBuilder.setupChart(barchart, requireContext())
+    val barChart = view.findViewById<BarChart>(R.id.bar_chart)
+    barChartBuilder.setupChart(barChart, requireContext())
 
     mRecyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
     mRecyclerView.layoutManager = LinearLayoutManager(requireContext()).also { mLayoutManager = it }
@@ -106,6 +109,8 @@ class UsageStatsFragment : Fragment() {
     }
     mRecyclerView.scrollToPosition(0)
 
+    weeklyUsageTime = view.findViewById(R.id.weekly_usage_time)
+
     toggleButton = view.findViewById(R.id.toggle_button)
     toggleButton.addOnButtonCheckedListener { _, idRes, checked ->
       if (checked) {
@@ -114,15 +119,18 @@ class UsageStatsFragment : Fragment() {
           viewModel.getUsageStats(it)
           when (it) {
             DAILY -> {
-              pieChart.visibility = VISIBLE
-              barchart.visibility = INVISIBLE
+              pieChart.isVisible = true
+              barChart.isVisible = false
             }
             WEEKLY -> {
-              pieChart.visibility = INVISIBLE
-              barchart.visibility = VISIBLE
-              barChartBuilder.updateData(barchart, viewModel.getWeekUsage())
+              pieChart.isVisible = false
+              barChart.isVisible = true
+              val weekUsage = viewModel.getWeekUsage()
+              barChartBuilder.updateData(barChart, weekUsage)
+              weeklyUsageTime.text = "${formatTime(weekUsage.sum())} this week"
             }
           }
+          weeklyUsageTime.isVisible = barChart.isVisible
         }
       }
     }

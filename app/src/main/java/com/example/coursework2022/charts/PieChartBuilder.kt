@@ -29,7 +29,7 @@ class PieChartBuilder @Inject constructor() {
   fun setupChart(chart: PieChart) {
     chart.description.isEnabled = false
 
-    chart.setCenterTextSize(10f)
+    chart.setCenterTextSize(13f)
 
     // radius of the center hole in percent of maximum radius
     chart.holeRadius = 44f
@@ -50,7 +50,7 @@ class PieChartBuilder @Inject constructor() {
     val spanSource = "${formatTime(totalSeconds)}\n$subtitle"
     val i = spanSource.indexOf(subtitle)
     val s = SpannableString(spanSource)
-    s.setSpan(RelativeSizeSpan(1.5f), 0, i, 0)
+    s.setSpan(RelativeSizeSpan(1.2f), 0, i, 0)
     s.setSpan(ForegroundColorSpan(Color.GRAY), i, s.length, 0)
     return s
   }
