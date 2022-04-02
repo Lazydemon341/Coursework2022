@@ -7,8 +7,8 @@
   <string name="app_not_allowed_msg">This app is not allowed in FocusMode</string>
 
   <plurals name="times_launched">
-    <item quantity="one">Time Launched</item>
-    <item quantity="other">Times Launched</item>
+    <item quantity="one">%d launch</item>
+    <item quantity="other">%d launches</item>
   </plurals>
 
   <string name="interval_daily">Daily</string>

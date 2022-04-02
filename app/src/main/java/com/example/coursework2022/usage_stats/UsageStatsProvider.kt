@@ -4,8 +4,7 @@ import android.app.usage.UsageEvents.Event
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import com.example.coursework2022.usage_stats.StatsUsageInterval.DAILY
-import com.example.coursework2022.utils.appIcon
-import com.example.coursework2022.utils.appLabel
+import com.example.coursework2022.utils.AppInfosHolder
 import com.example.coursework2022.utils.getAppsList
 import com.example.coursework2022.utils.getMidnightUtcMinusDays
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,18 +20,19 @@ import javax.inject.Singleton
 @Singleton
 class UsageStatsProvider @Inject constructor(
   @ApplicationContext
-  private val context: Context
+  private val context: Context,
+  private val appInfosHolder: AppInfosHolder
 ) {
 
   private val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
   private val mainPackageNames = context.getAppsList().map { it.activityInfo.packageName }
   private val usageStatsByInterval: MutableMap<StatsUsageInterval, List<AppUsageInfo>> = mutableMapOf()
+  private val weekUsageTime: ArrayList<Long> = arrayListOf()
+  private val usageStatsWeek: ArrayList<List<AppUsageInfo>> = arrayListOf()
+
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-  private val weekUsageTime: ArrayList<Long> = arrayListOf()
-  val usageStatsWeek: ArrayList<List<AppUsageInfo>> = arrayListOf()
-
-  init {
+  fun init() {
     scope.launch {
       StatsUsageInterval.values().forEach {
         getAndSaveUsageStats(it)
@@ -134,12 +134,12 @@ class UsageStatsProvider @Inject constructor(
           usageTimeSeconds = value.usageTimeSeconds,
           lastTimeUsedMillis = value.lastTimeUsed,
           launchesCount = value.launchesCount,
-          appLabel = context.appLabel(it.key),
-          appIcon = appIcon(it.key)
+          appLabel = appInfosHolder.getAppLabel(it.key),
+          appIcon = appInfosHolder.getAppIcon(it.key)
         )
       }
       .filter {
-        it.usageTimeSeconds > 0 || it.launchesCount > 0
+        it.usageTimeSeconds > 0
       }
   }
 

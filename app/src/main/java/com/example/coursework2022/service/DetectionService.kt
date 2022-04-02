@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val NOTIFICATION_ID = 1
+
 @AndroidEntryPoint
 class DetectionService : AccessibilityService() {
 
@@ -32,7 +34,6 @@ class DetectionService : AccessibilityService() {
   lateinit var preferenceStorage: PreferenceStorage
 
   private var isForeground = false
-  private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     return Service.START_STICKY
@@ -40,7 +41,7 @@ class DetectionService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    scope.launch {
+    CoroutineScope(SupervisorJob() + Dispatchers.Main).launch {
       preferenceStorage.focusModeStatusFlow.collect {
         updateForeground(it)
       }
@@ -71,7 +72,7 @@ class DetectionService : AccessibilityService() {
           setSmallIcon(R.drawable.ic_baseline_apps_24)
           setContentIntent(pendingIntent)
         }.build()
-      startForeground(1, notification)
+      startForeground(NOTIFICATION_ID, notification)
       isForeground = true
     } else if (!focusModeOn && isForeground) {
       stopForeground(true)

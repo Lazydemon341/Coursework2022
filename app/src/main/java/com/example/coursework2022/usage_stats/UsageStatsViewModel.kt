@@ -3,6 +3,7 @@ package com.example.coursework2022.usage_stats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ class UsageStatsViewModel @Inject constructor(
 
   fun getUsageStats(interval: StatsUsageInterval) {
     fetchUsageStatsJob?.cancel()
-    fetchUsageStatsJob = viewModelScope.launch {
+    fetchUsageStatsJob = viewModelScope.launch(Dispatchers.IO) {
       _usageStatsModelsFlow.value = usageStatsProvider
         .getUsageStats(interval)
         .sortedByDescending {

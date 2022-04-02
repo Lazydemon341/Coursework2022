@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.coursework2022.focus_mode.FocusModeFragment
 import com.example.coursework2022.usage_stats.UsageStatsFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -18,6 +19,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
 
     val viewPager = view.findViewById<ViewPager2>(R.id.pager)
     viewPager.adapter = PagerAdapter(this)
+    viewPager.offscreenPageLimit = 1
     val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
 
     TabLayoutMediator(tabLayout, viewPager) { tab, position ->

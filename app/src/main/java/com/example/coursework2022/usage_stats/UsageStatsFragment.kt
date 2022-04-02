@@ -1,7 +1,11 @@
 package com.example.coursework2022.usage_stats
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +56,8 @@ class UsageStatsFragment : Fragment() {
   private lateinit var scrollIndicator: ImageView
   private lateinit var content: View
   private lateinit var weeklyUsageTime: TextView
+  private lateinit var barChart: BarChart
+  private lateinit var pieChart: PieChart
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -65,12 +71,18 @@ class UsageStatsFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    val pieChart = view.findViewById<PieChart>(R.id.pie_chart)
-    pieChartBuilder.setupChart(pieChart)
+    setupToggleButton(view)
+    setupList(view)
 
-    val barChart = view.findViewById<BarChart>(R.id.bar_chart)
-    barChartBuilder.setupChart(barChart, requireContext())
+    content = view.findViewById(R.id.content)
+    scrollView = view.findViewById(R.id.scroll_view)
+    scrollIndicator = view.findViewById(R.id.scroll_indicator)
 
+    updateScrollIndicator()
+    content.viewTreeObserver.addOnScrollChangedListener(this::updateScrollIndicator)
+  }
+
+  private fun setupList(view: View) {
     mRecyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
     mRecyclerView.layoutManager = LinearLayoutManager(requireContext()).also { mLayoutManager = it }
     mUsageListAdapter = UsageStatsAdapter().apply {
@@ -109,7 +121,24 @@ class UsageStatsFragment : Fragment() {
     }
     mRecyclerView.scrollToPosition(0)
 
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.usageStatsModelsFlow.collect {
+          mUsageListAdapter.submitList(it)
+          pieChartBuilder.updateData(pieChart, it)
+        }
+      }
+    }
+  }
+
+  private fun setupToggleButton(view: View) {
     weeklyUsageTime = view.findViewById(R.id.weekly_usage_time)
+
+    pieChart = view.findViewById(R.id.pie_chart)
+    pieChartBuilder.setupChart(pieChart)
+
+    barChart = view.findViewById(R.id.bar_chart)
+    barChartBuilder.setupChart(barChart, requireContext())
 
     toggleButton = view.findViewById(R.id.toggle_button)
     toggleButton.addOnButtonCheckedListener { _, idRes, checked ->
@@ -125,9 +154,16 @@ class UsageStatsFragment : Fragment() {
             WEEKLY -> {
               pieChart.isVisible = false
               barChart.isVisible = true
+
               val weekUsage = viewModel.getWeekUsage()
               barChartBuilder.updateData(barChart, weekUsage)
-              weeklyUsageTime.text = "${formatTime(weekUsage.sum())} this week"
+
+              val text = "${formatTime(weekUsage.sum())} this week"
+              val i = text.indexOf("this week")
+              val spannableString = SpannableString(text)
+              spannableString.setSpan(RelativeSizeSpan(1.2f), 0, i, 0)
+              spannableString.setSpan(ForegroundColorSpan(Color.GRAY), i, spannableString.length, 0)
+              weeklyUsageTime.text = spannableString
             }
           }
           weeklyUsageTime.isVisible = barChart.isVisible
@@ -135,22 +171,6 @@ class UsageStatsFragment : Fragment() {
       }
     }
     toggleButton.check(R.id.button_daily)
-
-    viewLifecycleOwner.lifecycleScope.launch {
-      viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        viewModel.usageStatsModelsFlow.collect {
-          mUsageListAdapter.submitList(it)
-          pieChartBuilder.updateData(pieChart, it)
-        }
-      }
-    }
-
-    content = view.findViewById(R.id.content)
-    scrollView = view.findViewById(R.id.scroll_view)
-    scrollIndicator = view.findViewById(R.id.scroll_indicator)
-
-    updateScrollIndicator()
-    content.viewTreeObserver.addOnScrollChangedListener(this::updateScrollIndicator)
   }
 
   override fun onDestroyView() {

@@ -24,6 +24,9 @@ class PreferenceStorage @Inject constructor(
   private val _focusModeStatusFlow: MutableStateFlow<Boolean> = MutableStateFlow(getFocusModeStatus())
   val focusModeStatusFlow: StateFlow<Boolean> = _focusModeStatusFlow.asStateFlow()
 
+  private val _blackListAppsFlow: MutableStateFlow<Set<String>> = MutableStateFlow(getBlackListSet())
+  val blackListAppsFlow: StateFlow<Set<String>> = _blackListAppsFlow.asStateFlow()
+
   fun setFocusModeStatus(on: Boolean) {
     prefs.edit()
       .putBoolean(KEY_FOCUS_MODE, on)
@@ -47,6 +50,12 @@ class PreferenceStorage @Inject constructor(
     prefs.edit()
       .putStringSet(KEY_BLACKLIST, blackList)
       .apply()
+    _blackListAppsFlow.value = blackList
+  }
+
+  fun getBlackListApps(): Set<String> {
+    val set = prefs.getStringSet(KEY_BLACKLIST, emptySet())
+    return set ?: emptySet()
   }
 
   fun removeBlackListApp(packageName: String) {
@@ -55,6 +64,7 @@ class PreferenceStorage @Inject constructor(
     prefs.edit()
       .putStringSet(KEY_BLACKLIST, blackList)
       .apply()
+    _blackListAppsFlow.value = blackList
   }
 
   private fun getBlackListSet(): MutableSet<String> {

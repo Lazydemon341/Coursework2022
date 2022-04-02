@@ -1,6 +1,6 @@
 package com.example.coursework2022.usage_stats
 
-import android.icu.text.DateFormat
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.coursework2022.R
 import com.example.coursework2022.usage_stats.UsageStatsAdapter.ViewHolder
 import com.example.coursework2022.utils.formatTime
-import java.util.Date
+import com.example.coursework2022.utils.getQuantityString
 
 class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
-
-  val dateFormatter = DateFormat.getDateTimeInstance()
 
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
     return ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.item_app_usage, viewGroup, false))
@@ -30,23 +28,22 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
     return getItem(position).packageName.hashCode().toLong()
   }
 
-  inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+  inner class ViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
     private val appName: TextView = v.findViewById(R.id.app_name)
     private val usage: TextView = v.findViewById(R.id.app_usage)
     private val launchCount: TextView = v.findViewById(R.id.launch_count)
     private val appIcon: ImageView = v.findViewById(R.id.app_image)
 
+    @SuppressLint("SetTextI18n")
     fun bind(data: AppUsageInfo) {
       appName.text = data.appLabel
       usage.text = formatTime(data.usageTimeSeconds)
-      if (data.lastTimeUsedMillis != null) {
-        launchCount.text = dateFormatter.format(Date(data.lastTimeUsedMillis))
-      }
+      launchCount.text = v.context.getQuantityString(R.plurals.times_launched, data.launchesCount)
       appIcon.setImageDrawable(data.appIcon)
     }
   }
 
-  object DiffCallback : DiffUtil.ItemCallback<AppUsageInfo>() {
+  private object DiffCallback : DiffUtil.ItemCallback<AppUsageInfo>() {
     override fun areItemsTheSame(oldItem: AppUsageInfo, newItem: AppUsageInfo): Boolean =
       oldItem.packageName == newItem.packageName
 

@@ -10,14 +10,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.commit
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.coursework2022.usage_stats.UsageStatsProvider
+import com.example.coursework2022.utils.AppInfosHolder
 import com.example.coursework2022.utils.isPermissionGranted
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+  @Inject
+  lateinit var appInfosHolder: AppInfosHolder
+
+  @Inject
+  lateinit var usageStatsProvider: UsageStatsProvider
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    appInfosHolder.init()
+    usageStatsProvider.init()
     setContentView(R.layout.activity_main)
     supportFragmentManager.commit { replace(R.id.container, ViewPagerFragment.newInstance()) }
     checkPermissions()

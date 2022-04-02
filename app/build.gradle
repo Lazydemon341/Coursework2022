@@ -82,4 +82,7 @@ dependencies {
 
   // MaterialAbout
   implementation 'com.github.jrvansuita:MaterialAbout:0.2.6'
+
+  // RecyclerView animator
+  implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
 }
