@@ -48,7 +48,7 @@ class BarChartBuilder @Inject constructor() {
     xAxis.setDrawGridLines(false)
     xAxis.valueFormatter = object : ValueFormatter() {
       override fun getFormattedValue(value: Float): String {
-        return getShortDayName(7 - value.toInt())
+        return getShortDayName(6 - value.toInt())
       }
     }
 

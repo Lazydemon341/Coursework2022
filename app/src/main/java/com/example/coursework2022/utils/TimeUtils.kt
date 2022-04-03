@@ -38,7 +38,7 @@ fun getNextMidnightUTC(): Long {
 
 fun getShortDayName(minusDays: Int): String {
   val c = Calendar.getInstance()
-  c.set(Calendar.DAY_OF_YEAR, -minusDays)
+  c.add(Calendar.DAY_OF_YEAR, -minusDays)
   return String.format("%ta", c)
 }
 

@@ -53,11 +53,6 @@ class PreferenceStorage @Inject constructor(
     _blackListAppsFlow.value = blackList
   }
 
-  fun getBlackListApps(): Set<String> {
-    val set = prefs.getStringSet(KEY_BLACKLIST, emptySet())
-    return set ?: emptySet()
-  }
-
   fun removeBlackListApp(packageName: String) {
     val blackList = getBlackListSet()
     blackList.remove(packageName)

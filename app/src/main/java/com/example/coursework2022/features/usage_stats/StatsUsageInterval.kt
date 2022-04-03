@@ -1,4 +1,4 @@
-package com.example.coursework2022.usage_stats
+package com.example.coursework2022.features.usage_stats
 
 import android.content.Context
 import android.icu.util.Calendar

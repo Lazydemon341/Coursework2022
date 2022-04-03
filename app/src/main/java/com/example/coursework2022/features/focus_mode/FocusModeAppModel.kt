@@ -1,4 +1,4 @@
-package com.example.coursework2022.focus_mode
+package com.example.coursework2022.features.focus_mode
 
 import android.graphics.drawable.Drawable
 

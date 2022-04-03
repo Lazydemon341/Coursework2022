@@ -5,8 +5,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.example.coursework2022.focus_mode.FocusModeFragment
-import com.example.coursework2022.usage_stats.UsageStatsFragment
+import com.example.coursework2022.features.focus_mode.FocusModeFragment
+import com.example.coursework2022.features.usage_stats.UsageStatsFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -14,20 +14,30 @@ private const val PAGES_COUNT = 2
 
 class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
 
+  private lateinit var tabLayout: TabLayout
+
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
     val viewPager = view.findViewById<ViewPager2>(R.id.pager)
     viewPager.adapter = PagerAdapter(this)
     viewPager.offscreenPageLimit = 1
-    val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
 
+    tabLayout = view.findViewById(R.id.tab_layout)
     TabLayoutMediator(tabLayout, viewPager) { tab, position ->
       tab.text = when (position) {
         0 -> UsageStatsFragment.NAME
         else -> FocusModeFragment.NAME
       }
     }.attach()
+  }
+
+  fun updateTabLayoutShadow(show: Boolean) {
+    tabLayout.elevation = if (show) {
+      requireContext().resources.getDimension(R.dimen.margin_small)
+    } else {
+      0f
+    }
   }
 
   private inner class PagerAdapter(fragment: ViewPagerFragment) : FragmentStateAdapter(fragment) {

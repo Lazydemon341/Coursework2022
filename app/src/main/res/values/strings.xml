@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Coursework2022</string>
+  <string name="app_name">UsageManager</string>
   <string name="detection_service_description">This service helps to detect any apps that is on the foreground.
     \nPlease enable it so that FocusMode can function normally.</string>
   <string name="pref_black_list_title">Apps that will be disabled during FocusMode</string>

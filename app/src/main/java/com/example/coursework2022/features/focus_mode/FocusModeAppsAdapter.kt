@@ -1,4 +1,4 @@
-package com.example.coursework2022.focus_mode
+package com.example.coursework2022.features.focus_mode
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -10,9 +10,10 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.coursework2022.R.id
 import com.example.coursework2022.R.layout
-import com.example.coursework2022.focus_mode.FocusModeAppsAdapter.ViewHolder
+import com.example.coursework2022.features.focus_mode.FocusModeAppsAdapter.ViewHolder
 
 class FocusModeAppsAdapter : ListAdapter<FocusModeAppModel, ViewHolder>(DiffCallback) {
 
@@ -54,7 +55,9 @@ class FocusModeAppsAdapter : ListAdapter<FocusModeAppModel, ViewHolder>(DiffCall
     @SuppressLint("SetTextI18n")
     fun bind(data: FocusModeAppModel) {
       appName.text = data.appLabel
-      appIcon.setImageDrawable(data.appIcon)
+      Glide.with(view)
+        .load(data.appIcon)
+        .into(appIcon)
       card.setOnClickListener { onAppClickListener?.invoke(data) }
     }
 

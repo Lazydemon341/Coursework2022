@@ -26,17 +26,19 @@ class AppInfosHolder @Inject constructor(
       getAppsList()
         .forEach {
           appIconByPackageName[it] = appIcon(it)
-          appLabelByPackageName[it] = context.appLabel(it)
+          appLabelByPackageName[it] = appLabel(context, it)
         }
     }
   }
 
   fun getAppLabel(packageName: String): String {
-    return appLabelByPackageName[packageName] ?: ""
+    return appLabelByPackageName[packageName] ?: appLabel(context, packageName).also {
+      appLabelByPackageName[packageName] = it
+    }
   }
 
   fun getAppIcon(packageName: String): Drawable? {
-    return appIconByPackageName[packageName]
+    return appIconByPackageName[packageName] ?: appIcon(packageName)
   }
 
   fun getAppsList(): List<String> {

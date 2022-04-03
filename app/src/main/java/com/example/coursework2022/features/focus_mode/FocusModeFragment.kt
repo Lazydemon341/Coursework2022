@@ -1,4 +1,4 @@
-package com.example.coursework2022.focus_mode
+package com.example.coursework2022.features.focus_mode
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog.Builder
@@ -7,18 +7,25 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import com.example.coursework2022.MainActivity
 import com.example.coursework2022.R
 import com.example.coursework2022.R.layout
+import com.example.coursework2022.ViewPagerFragment
 import com.example.coursework2022.utils.isAccessibilitySettingsOn
 import dagger.hilt.android.AndroidEntryPoint
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
+import jp.wasabeef.recyclerview.animators.FadeInAnimator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -28,16 +35,47 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
 
   private val viewModel: FocusModeViewModel by viewModels()
 
+  private lateinit var viewPagerFragment: ViewPagerFragment
+  private lateinit var scrollView: NestedScrollView
+  private lateinit var content: View
+  private lateinit var scrollIndicator: ImageView
   private lateinit var focusModeButton: Button
-  private lateinit var blackListApps: RecyclerView
+  private lateinit var blacklistTitle: TextView
+  private lateinit var blacklistApps: RecyclerView
+  private lateinit var allowedTitle: TextView
   private lateinit var allowedApps: RecyclerView
-
+  private lateinit var schedulesButton: Button
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    setupScrollView(view)
     setupFocusButton(view)
     setupBlacklistApps(view)
     setupAllowedApps(view)
+    setupSchedules(view)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    content.viewTreeObserver.addOnScrollChangedListener(this::updateScrollIndicator)
+  }
+
+  override fun onPause() {
+    super.onPause()
+    content.viewTreeObserver.removeOnScrollChangedListener(this::updateScrollIndicator)
+  }
+
+  private fun setupScrollView(view: View) {
+    viewPagerFragment = parentFragment as ViewPagerFragment
+    content = view.findViewById(R.id.content)
+    scrollView = view.findViewById(R.id.scroll_view)
+    scrollIndicator = view.findViewById(R.id.scroll_indicator)
+  }
+
+  private fun updateScrollIndicator() {
+    viewPagerFragment.updateTabLayoutShadow(scrollView.canScrollVertically(-1))
+    scrollIndicator.isVisible = scrollView.canScrollVertically(1)
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -68,17 +106,24 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
   }
 
   private fun setupBlacklistApps(view: View) {
-    blackListApps = view.findViewById(R.id.blacklist_apps)
+    blacklistTitle = view.findViewById(R.id.blacklist_title)
+    allowedTitle = view.findViewById(R.id.allowed_title)
+    blacklistApps = view.findViewById(R.id.blacklist_apps)
     val adapter = FocusModeAppsAdapter()
     adapter.setOnAppClickListener(viewModel::removeFromBlackList)
-    blackListApps.adapter = adapter
-    blackListApps.itemAnimator = SlideInLeftAnimator()
+    blacklistApps.adapter = adapter
+    blacklistApps.itemAnimator = FadeInAnimator()
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         viewModel.blackListAppsFlow.collect {
           adapter.submitList(it)
-          focusModeButton.isEnabled = it.isNotEmpty()
+          launch {
+            delay(100)
+            focusModeButton.isEnabled = it.isNotEmpty()
+            blacklistTitle.text = if (it.isEmpty()) "Select apps for blacklist:" else "Your blacklist:"
+          }
+          allowedTitle.isVisible = it.isNotEmpty()
         }
       }
     }
@@ -89,7 +134,7 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
     val adapter = FocusModeAppsAdapter()
     adapter.setOnAppClickListener(viewModel::addToBlackList)
     allowedApps.adapter = adapter
-    allowedApps.itemAnimator = SlideInLeftAnimator()
+    allowedApps.itemAnimator = FadeInAnimator()
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -97,6 +142,13 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
           adapter.submitList(it)
         }
       }
+    }
+  }
+
+  private fun setupSchedules(view: View) {
+    schedulesButton = view.findViewById(R.id.schedules_button)
+    schedulesButton.setOnClickListener {
+      (requireActivity() as MainActivity).openSchedules()
     }
   }
 

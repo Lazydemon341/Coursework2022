@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import com.example.coursework2022.usage_stats.AppUsageInfo
+import com.example.coursework2022.features.usage_stats.AppUsageInfo
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -61,7 +61,7 @@ class PieChartBuilder @Inject constructor() {
     val totalTime = appUsageInfos.sumOf { it.usageTimeSeconds }.toFloat()
 
     for (appUsageInfo in appUsageInfos) {
-      if (appUsageInfo.usageTimeSeconds.toFloat() / totalTime >= 0.15f) {
+      if (appUsageInfo.usageTimeSeconds.toFloat() / totalTime >= 0.07f) {
         entries1.add(PieEntry(appUsageInfo.usageTimeSeconds.toFloat()).apply {
           data = appUsageInfo
           label = appUsageInfo.appLabel

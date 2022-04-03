@@ -1,4 +1,4 @@
-package com.example.coursework2022.usage_stats
+package com.example.coursework2022.features.usage_stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

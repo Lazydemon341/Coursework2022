@@ -1,4 +1,4 @@
-package com.example.coursework2022.usage_stats
+package com.example.coursework2022.features.usage_stats
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,8 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.coursework2022.R
-import com.example.coursework2022.usage_stats.UsageStatsAdapter.ViewHolder
+import com.example.coursework2022.features.usage_stats.UsageStatsAdapter.ViewHolder
 import com.example.coursework2022.utils.formatTime
 import com.example.coursework2022.utils.getQuantityString
 
@@ -28,18 +29,20 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
     return getItem(position).packageName.hashCode().toLong()
   }
 
-  inner class ViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
-    private val appName: TextView = v.findViewById(R.id.app_name)
-    private val usage: TextView = v.findViewById(R.id.app_usage)
-    private val launchCount: TextView = v.findViewById(R.id.launch_count)
-    private val appIcon: ImageView = v.findViewById(R.id.app_image)
+  inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    private val appName: TextView = view.findViewById(R.id.app_name)
+    private val usage: TextView = view.findViewById(R.id.app_usage)
+    private val launchCount: TextView = view.findViewById(R.id.launch_count)
+    private val appIcon: ImageView = view.findViewById(R.id.app_image)
 
     @SuppressLint("SetTextI18n")
     fun bind(data: AppUsageInfo) {
       appName.text = data.appLabel
       usage.text = formatTime(data.usageTimeSeconds)
-      launchCount.text = v.context.getQuantityString(R.plurals.times_launched, data.launchesCount)
-      appIcon.setImageDrawable(data.appIcon)
+      launchCount.text = view.context.getQuantityString(R.plurals.times_launched, data.launchesCount)
+      Glide.with(view)
+        .load(data.appIcon)
+        .into(appIcon)
     }
   }
 

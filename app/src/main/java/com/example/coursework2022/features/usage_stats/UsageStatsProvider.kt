@@ -1,9 +1,9 @@
-package com.example.coursework2022.usage_stats
+package com.example.coursework2022.features.usage_stats
 
 import android.app.usage.UsageEvents.Event
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import com.example.coursework2022.usage_stats.StatsUsageInterval.DAILY
+import com.example.coursework2022.features.usage_stats.StatsUsageInterval.DAILY
 import com.example.coursework2022.utils.AppInfosHolder
 import com.example.coursework2022.utils.getAppsList
 import com.example.coursework2022.utils.getMidnightUtcMinusDays

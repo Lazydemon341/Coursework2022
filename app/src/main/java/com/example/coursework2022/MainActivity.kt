@@ -6,11 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.afollestad.materialdialogs.MaterialDialog
-import com.example.coursework2022.usage_stats.UsageStatsProvider
+import com.example.coursework2022.features.about.AboutFragment
+import com.example.coursework2022.features.schedules.SchedulesFragment
+import com.example.coursework2022.features.usage_stats.UsageStatsProvider
 import com.example.coursework2022.utils.AppInfosHolder
 import com.example.coursework2022.utils.isPermissionGranted
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,8 +35,46 @@ class MainActivity : AppCompatActivity() {
     appInfosHolder.init()
     usageStatsProvider.init()
     setContentView(R.layout.activity_main)
-    supportFragmentManager.commit { replace(R.id.container, ViewPagerFragment.newInstance()) }
+    openViewPager()
     checkPermissions()
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.toolbar_menu, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.about -> {
+        openAbout()
+        return true
+      }
+    }
+    return super.onOptionsItemSelected(item)
+  }
+
+  fun openViewPager() {
+    supportFragmentManager.commit {
+      setCustomAnimations(R.animator.nav_default_enter_anim, R.animator.nav_default_exit_anim)
+      replace<ViewPagerFragment>(R.id.container)
+    }
+  }
+
+  fun openSchedules() {
+    supportFragmentManager.commit {
+      setCustomAnimations(R.animator.nav_default_enter_anim, R.animator.nav_default_exit_anim)
+      replace<SchedulesFragment>(R.id.container)
+      addToBackStack(null)
+    }
+  }
+
+  fun openAbout() {
+    supportFragmentManager.commit {
+      setCustomAnimations(R.animator.nav_default_enter_anim, R.animator.nav_default_exit_anim)
+      replace<AboutFragment>(R.id.container)
+      addToBackStack(null)
+    }
   }
 
   private fun checkPermissions() {

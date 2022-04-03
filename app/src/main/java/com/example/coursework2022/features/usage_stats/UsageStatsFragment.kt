@@ -1,4 +1,4 @@
-package com.example.coursework2022.usage_stats
+package com.example.coursework2022.features.usage_stats
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,10 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.example.coursework2022.R
+import com.example.coursework2022.ViewPagerFragment
 import com.example.coursework2022.charts.BarChartBuilder
 import com.example.coursework2022.charts.PieChartBuilder
-import com.example.coursework2022.usage_stats.StatsUsageInterval.DAILY
-import com.example.coursework2022.usage_stats.StatsUsageInterval.WEEKLY
+import com.example.coursework2022.features.usage_stats.StatsUsageInterval.DAILY
+import com.example.coursework2022.features.usage_stats.StatsUsageInterval.WEEKLY
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -38,7 +37,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UsageStatsFragment : Fragment() {
+class UsageStatsFragment : Fragment(R.layout.fragment_app_usage_statistics) {
 
   @Inject
   lateinit var pieChartBuilder: PieChartBuilder
@@ -48,6 +47,7 @@ class UsageStatsFragment : Fragment() {
 
   private val viewModel: UsageStatsViewModel by viewModels()
 
+  private lateinit var viewPagerFragment: ViewPagerFragment
   private lateinit var mUsageListAdapter: UsageStatsAdapter
   private lateinit var mRecyclerView: RecyclerView
   private lateinit var mLayoutManager: RecyclerView.LayoutManager
@@ -59,17 +59,11 @@ class UsageStatsFragment : Fragment() {
   private lateinit var barChart: BarChart
   private lateinit var pieChart: PieChart
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
-    return inflater.inflate(R.layout.fragment_app_usage_statistics, container, false)
-  }
-
   @SuppressLint("SetTextI18n")
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
+    viewPagerFragment = parentFragment as ViewPagerFragment
 
     setupToggleButton(view)
     setupList(view)
@@ -79,7 +73,21 @@ class UsageStatsFragment : Fragment() {
     scrollIndicator = view.findViewById(R.id.scroll_indicator)
 
     updateScrollIndicator()
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    toggleButton.clearOnButtonCheckedListeners()
+  }
+
+  override fun onResume() {
+    super.onResume()
     content.viewTreeObserver.addOnScrollChangedListener(this::updateScrollIndicator)
+  }
+
+  override fun onPause() {
+    super.onPause()
+    content.viewTreeObserver.removeOnScrollChangedListener(this::updateScrollIndicator)
   }
 
   private fun setupList(view: View) {
@@ -173,14 +181,9 @@ class UsageStatsFragment : Fragment() {
     toggleButton.check(R.id.button_daily)
   }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    toggleButton.clearOnButtonCheckedListeners()
-    content.viewTreeObserver.removeOnScrollChangedListener(this::updateScrollIndicator)
-  }
-
   private fun updateScrollIndicator() {
     scrollIndicator.isVisible = scrollView.canScrollVertically(1)
+    viewPagerFragment.updateTabLayoutShadow(scrollView.canScrollVertically(-1))
   }
 
   companion object {

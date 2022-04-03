@@ -12,7 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import bot.box.appusage.utils.UsageUtils
-import com.example.coursework2022.R.mipmap
+import com.example.coursework2022.R
 
 fun Context.drawable(@DrawableRes res: Int): Drawable? {
   return AppCompatResources.getDrawable(this, res)
@@ -21,11 +21,11 @@ fun Context.drawable(@DrawableRes res: Int): Drawable? {
 fun Fragment.drawable(@DrawableRes res: Int): Drawable? =
   requireContext().drawable(res)
 
-fun Context.appLabel(packageName: String): String =
-  UsageUtils.parsePackageName(packageManager, packageName)
+fun appLabel(context: Context, packageName: String): String =
+  UsageUtils.parsePackageName(context.packageManager, packageName)
 
 fun appIcon(packageName: String): Drawable? =
-  UsageUtils.parsePackageIcon(packageName, mipmap.ic_launcher)
+  UsageUtils.parsePackageIcon(packageName, R.drawable.ic_launcher)
 
 fun Context.getAppsList(): List<ResolveInfo> {
   val main = Intent(Intent.ACTION_MAIN, null)
