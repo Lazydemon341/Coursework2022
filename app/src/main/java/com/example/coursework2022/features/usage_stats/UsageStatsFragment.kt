@@ -133,7 +133,7 @@ class UsageStatsFragment : Fragment(R.layout.fragment_app_usage_statistics) {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         viewModel.usageStatsModelsFlow.collect {
           mUsageListAdapter.submitList(it)
-          pieChartBuilder.updateData(pieChart, it)
+          pieChartBuilder.updateData(requireContext().resources, pieChart, it)
         }
       }
     }

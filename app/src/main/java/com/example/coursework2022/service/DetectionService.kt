@@ -45,7 +45,7 @@ class DetectionService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    CoroutineScope(SupervisorJob() + Dispatchers.Main).launch {
+    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
       preferenceStorage.focusModeStatusFlow.collect {
         updateForeground(it)
       }

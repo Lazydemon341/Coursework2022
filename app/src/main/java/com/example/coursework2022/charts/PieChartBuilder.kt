@@ -1,9 +1,12 @@
 package com.example.coursework2022.charts
 
+import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import androidx.core.graphics.drawable.toBitmap
 import com.example.coursework2022.features.usage_stats.AppUsageInfo
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.animation.Easing
@@ -18,7 +21,17 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
+
 private const val CHART_ANIMATION_DURATION = 350
+private val COLOR_TEMPLATE = intArrayOf(
+  ColorTemplate.rgb("#2ecc71"),
+  ColorTemplate.rgb("#f1c40f"),
+  ColorTemplate.rgb("#e74c3c"),
+  ColorTemplate.rgb("#3498db"),
+  ColorTemplate.rgb("#f1c40f"),
+  ColorTemplate.rgb("#e74c3c"),
+  ColorTemplate.rgb("#3498db")
+)
 
 @FragmentScoped
 class PieChartBuilder @Inject constructor() {
@@ -31,6 +44,8 @@ class PieChartBuilder @Inject constructor() {
     // radius of the center hole in percent of maximum radius
     chart.holeRadius = 44f
     chart.transparentCircleRadius = 50f
+
+    chart.setEntryLabelColor(Color.BLACK)
 
     chart.legend.apply {
       verticalAlignment = TOP
@@ -52,16 +67,20 @@ class PieChartBuilder @Inject constructor() {
     return s
   }
 
-  fun updateData(chart: PieChart, appUsageInfos: List<AppUsageInfo>) {
+  fun updateData(resources: Resources, chart: PieChart, appUsageInfos: List<AppUsageInfo>) {
+    // TODO: move from ui thread
     val entries1 = ArrayList<PieEntry>()
     val other = ArrayList<AppUsageInfo>()
     val totalTime = appUsageInfos.sumOf { it.usageTimeSeconds }.toFloat()
 
-    for (appUsageInfo in appUsageInfos) {
-      if (appUsageInfo.usageTimeSeconds.toFloat() / totalTime >= 0.07f) {
+    for ((i, appUsageInfo) in appUsageInfos.withIndex()) {
+      if (i < 4) {
         entries1.add(PieEntry(appUsageInfo.usageTimeSeconds.toFloat()).apply {
           data = appUsageInfo
-          label = appUsageInfo.appLabel
+          label = ""
+
+          val bitmap = (appUsageInfo.appIcon)?.toBitmap(108, 108)
+          icon = BitmapDrawable(resources, bitmap)
         })
       } else {
         other.add(appUsageInfo)
@@ -74,10 +93,8 @@ class PieChartBuilder @Inject constructor() {
     })
 
     val ds1 = PieDataSet(entries1, "")
-    ds1.setColors(*ColorTemplate.MATERIAL_COLORS)
+    ds1.setColors(*COLOR_TEMPLATE)
     ds1.sliceSpace = 4f
-    ds1.valueTextColor = Color.WHITE
-    ds1.valueTextSize = 12f
     ds1.setDrawValues(false)
 
     chart.data = PieData(ds1)

@@ -10,8 +10,6 @@ import com.example.coursework2022.features.usage_stats.UsageStatsFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-private const val PAGES_COUNT = 2
-
 class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
 
   private lateinit var tabLayout: TabLayout
@@ -53,6 +51,9 @@ class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
   }
 
   companion object {
+
     fun newInstance() = ViewPagerFragment()
+
+    private const val PAGES_COUNT = 2
   }
 }
