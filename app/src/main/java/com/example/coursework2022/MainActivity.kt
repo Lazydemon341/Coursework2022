@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
     return super.onOptionsItemSelected(item)
   }
 
+  override fun onSupportNavigateUp(): Boolean {
+    onBackPressed()
+    return true
+  }
+
   fun openViewPager() {
     supportFragmentManager.commit {
       setCustomAnimations(R.animator.nav_default_enter_anim, R.animator.nav_default_exit_anim)
@@ -86,11 +91,10 @@ class MainActivity : AppCompatActivity() {
     if (mode != AppOpsManager.MODE_ALLOWED) {
       MaterialDialog(this)
         .title(text = "Permission required")
-        .message(text = "Please in the settigns")
+        .message(text = "Please grant usage access permission")
         .positiveButton(text = "ok") {
           startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }
-        .negativeButton(text = "cancel")
         .show()
     }
   }

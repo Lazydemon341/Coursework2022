@@ -24,9 +24,12 @@ import com.example.coursework2022.R.layout
 import com.example.coursework2022.ViewPagerFragment
 import com.example.coursework2022.utils.isAccessibilitySettingsOn
 import dagger.hilt.android.AndroidEntryPoint
-import jp.wasabeef.recyclerview.animators.FadeInAnimator
-import kotlinx.coroutines.delay
+import jp.wasabeef.recyclerview.animators.FadeInDownAnimator
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 
@@ -81,18 +84,6 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
   @SuppressLint("ClickableViewAccessibility")
   private fun setupFocusButton(view: View) {
     focusModeButton = view.findViewById(R.id.focus_mode_button)
-
-    viewLifecycleOwner.lifecycleScope.launch {
-      viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        viewModel.focusModeStatusFlow.collect {
-          focusModeButton.text =
-            if (it && requireContext().isAccessibilitySettingsOn())
-              "Stop FocusMode"
-            else
-              "Start FocusMode"
-        }
-      }
-    }
     focusModeButton.setOnClickListener {
       if (!requireContext().isAccessibilitySettingsOn()) {
         openAccessibilityService()
@@ -103,6 +94,25 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
       val msg = if (focusModeOn) "FocusMode has been started!" else "FocusMode has been stopped"
       Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.blackListAppsFlow.combine(viewModel.focusModeStatusFlow) { blacklist, focusModeOn ->
+          focusModeButton.isEnabled = if (focusModeOn && requireContext().isAccessibilitySettingsOn()) {
+            true
+          } else {
+            blacklist.isNotEmpty()
+          }
+          focusModeButton.text =
+            if (focusModeOn && requireContext().isAccessibilitySettingsOn())
+              "Stop FocusMode"
+            else
+              "Start FocusMode"
+        }
+          .flowOn(Dispatchers.Main.immediate)
+          .collect {}
+      }
+    }
   }
 
   private fun setupBlacklistApps(view: View) {
@@ -112,18 +122,14 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
     val adapter = FocusModeAppsAdapter()
     adapter.setOnAppClickListener(viewModel::removeFromBlackList)
     blacklistApps.adapter = adapter
-    blacklistApps.itemAnimator = FadeInAnimator()
+    blacklistApps.itemAnimator = FadeInUpAnimator()
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         viewModel.blackListAppsFlow.collect {
-          adapter.submitList(it)
-          launch {
-            delay(100)
-            focusModeButton.isEnabled = it.isNotEmpty()
-            blacklistTitle.text = if (it.isEmpty()) "Select apps for blacklist:" else "Your blacklist:"
-          }
+          blacklistTitle.text = if (it.isEmpty()) "Select apps for blacklist:" else "Your blacklist:"
           allowedTitle.isVisible = it.isNotEmpty()
+          adapter.submitList(it)
         }
       }
     }
@@ -134,7 +140,7 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
     val adapter = FocusModeAppsAdapter()
     adapter.setOnAppClickListener(viewModel::addToBlackList)
     allowedApps.adapter = adapter
-    allowedApps.itemAnimator = FadeInAnimator()
+    allowedApps.itemAnimator = FadeInDownAnimator()
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -160,7 +166,7 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
         .setPositiveButton("OK") { _, _ ->
           Toast.makeText(
             requireContext(),
-            "Please choose service/Coursework2022",
+            "Please turn on UsageManager service",
             Toast.LENGTH_SHORT
           ).show()
           val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)

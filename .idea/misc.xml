@@ -7,6 +7,7 @@
         <entry key="../../Library/Android/sdk/platforms/android-31/data/res/layout/simple_list_item_1.xml" value="0.37092391304347827" />
         <entry key="../../Library/Android/sdk/platforms/android-31/data/res/layout/simple_spinner_dropdown_item.xml" value="0.1514690982776089" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.31666666666666665" />
+        <entry key="app/src/main/res/drawable/ic_add.xml" value="0.1675" />
         <entry key="app/src/main/res/drawable/ic_baseline_apps_24.xml" value="0.31666666666666665" />
         <entry key="app/src/main/res/drawable/ic_image2vector_svg__1_.xml" value="0.1675" />
         <entry key="app/src/main/res/drawable/ic_launcher_1.xml" value="0.16280822753906254" />
@@ -18,9 +19,10 @@
         <entry key="app/src/main/res/layout/focus_mode_fragment.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/fragment_app_usage_statistics.xml" value="0.2444938989089149" />
         <entry key="app/src/main/res/layout/fragment_pager.xml" value="0.189209726443769" />
-        <entry key="app/src/main/res/layout/fragment_schedules.xml" value="0.16185410334346503" />
+        <entry key="app/src/main/res/layout/fragment_schedules.xml" value="0.33065750910518377" />
         <entry key="app/src/main/res/layout/item_app_usage.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/item_focus_mode_app.xml" value="0.13677811550151975" />
+        <entry key="app/src/main/res/layout/item_schedule.xml" value="0.17958459979736577" />
         <entry key="app/src/main/res/layout/schedules_card.xml" value="0.16185410334346503" />
         <entry key="app/src/main/res/layout/usage_stats_fragment.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.30052083333333335" />

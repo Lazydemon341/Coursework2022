@@ -14,6 +14,7 @@
       android:id="@+id/scroll_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:scrollbars="vertical"
       >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -32,6 +33,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="48dp"
           android:enabled="false"
+          android:textColor="@color/white"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/schedules_card_layout"
@@ -68,12 +70,13 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="24dp"
           android:layout_marginTop="24dp"
+          android:text="Select more apps:"
           android:textColor="?attr/colorPrimaryVariant"
           android:textSize="16sp"
           android:textStyle="bold"
+          android:visibility="gone"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@id/blacklist_apps"
-          android:text="Select more apps:"
           />
 
       <androidx.recyclerview.widget.RecyclerView
@@ -84,6 +87,7 @@
           android:overScrollMode="never"
           app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
           app:layout_constraintTop_toBottomOf="@id/allowed_title"
+          app:layout_goneMarginTop="0dp"
           />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

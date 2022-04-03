@@ -1,8 +1,7 @@
 package com.example.coursework2022.charts
 
-import android.content.Context
 import com.example.coursework2022.utils.formatTime
-import com.example.coursework2022.utils.getShortDayName
+import com.example.coursework2022.utils.getShortWeekdayMinusDaysName
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
@@ -17,8 +16,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
-private const val CHART_ANIMATION_DURATION = 300
-private const val FAST_CHART_ANIMATION_DURATION = 200
+private const val CHART_ANIMATION_DURATION = 350
 private val COLOR_TEMPLATE = intArrayOf(
   ColorTemplate.rgb("#64dd17")
 )
@@ -26,9 +24,7 @@ private val COLOR_TEMPLATE = intArrayOf(
 @FragmentScoped
 class BarChartBuilder @Inject constructor() {
 
-  private var animatedOnce = false
-
-  fun setupChart(chart: BarChart, context: Context) {
+  fun setupChart(chart: BarChart) {
     chart.description.isEnabled = false
     chart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
       override fun onValueSelected(e: Entry?, h: Highlight?) {}
@@ -48,7 +44,7 @@ class BarChartBuilder @Inject constructor() {
     xAxis.setDrawGridLines(false)
     xAxis.valueFormatter = object : ValueFormatter() {
       override fun getFormattedValue(value: Float): String {
-        return getShortDayName(6 - value.toInt())
+        return getShortWeekdayMinusDaysName(6 - value.toInt())
       }
     }
 
@@ -75,11 +71,6 @@ class BarChartBuilder @Inject constructor() {
     ds.setColors(*ColorTemplate.MATERIAL_COLORS)
     ds.setDrawValues(false)
     chart.data = BarData(listOf(ds))
-    if (!animatedOnce) {
-      chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCubic)
-      animatedOnce = true
-    } else {
-      chart.animateY(FAST_CHART_ANIMATION_DURATION, Easing.EaseInCubic)
-    }
+    chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCubic)
   }
 }

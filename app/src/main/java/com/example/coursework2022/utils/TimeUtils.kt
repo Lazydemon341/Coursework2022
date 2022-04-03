@@ -36,7 +36,19 @@ fun getNextMidnightUTC(): Long {
   return LocalDate.now().atStartOfDay(defaultZone).withZoneSameInstant(utc).plusDays(1).toInstant().toEpochMilli()
 }
 
-fun getShortDayName(minusDays: Int): String {
+fun getShortWeekdayNames(): List<String> {
+  return (1..7).map {
+    getShortWeekdayName(it)
+  }
+}
+
+fun getShortWeekdayName(day: Int): String {
+  val c = Calendar.getInstance()
+  c.set(Calendar.DAY_OF_WEEK, day)
+  return String.format("%ta", c)
+}
+
+fun getShortWeekdayMinusDaysName(minusDays: Int): String {
   val c = Calendar.getInstance()
   c.add(Calendar.DAY_OF_YEAR, -minusDays)
   return String.format("%ta", c)

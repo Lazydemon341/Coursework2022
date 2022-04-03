@@ -18,13 +18,10 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
-private const val CHART_ANIMATION_DURATION = 400
-private const val FAST_CHART_ANIMATION_DURATION = 300
+private const val CHART_ANIMATION_DURATION = 350
 
 @FragmentScoped
 class PieChartBuilder @Inject constructor() {
-
-  private var animatedOnce = false
 
   fun setupChart(chart: PieChart) {
     chart.description.isEnabled = false
@@ -85,11 +82,6 @@ class PieChartBuilder @Inject constructor() {
 
     chart.data = PieData(ds1)
     chart.centerText = generateCenterText(appUsageInfos)
-    if (!animatedOnce) {
-      chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCirc)
-      animatedOnce = true
-    } else {
-      chart.animateY(FAST_CHART_ANIMATION_DURATION, Easing.EaseInCirc)
-    }
+    chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCirc)
   }
 }

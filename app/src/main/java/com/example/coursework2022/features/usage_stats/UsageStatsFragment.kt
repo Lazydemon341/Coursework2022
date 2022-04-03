@@ -146,7 +146,7 @@ class UsageStatsFragment : Fragment(R.layout.fragment_app_usage_statistics) {
     pieChartBuilder.setupChart(pieChart)
 
     barChart = view.findViewById(R.id.bar_chart)
-    barChartBuilder.setupChart(barChart, requireContext())
+    barChartBuilder.setupChart(barChart)
 
     toggleButton = view.findViewById(R.id.toggle_button)
     toggleButton.addOnButtonCheckedListener { _, idRes, checked ->

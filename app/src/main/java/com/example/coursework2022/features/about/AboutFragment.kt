@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.coursework2022.R
 import com.example.coursework2022.R.string
@@ -17,8 +18,8 @@ class AboutFragment : Fragment() {
     savedInstanceState: Bundle?
   ): View {
     return AboutBuilder.with(requireContext())
-      //.setPhoto(R.mipmap.ic_launcher)
-      //.setCover(R.mipmap.profile_cover)
+      .setPhoto(R.drawable.photo)
+      .setCover(R.mipmap.profile_cover)
       .setName("Vlasyuk Alexander")
       .setSubTitle("Android developer, Moscow")
       .addEmailLink("vlas.s.341@gmail.com")
@@ -34,15 +35,20 @@ class AboutFragment : Fragment() {
       .build();
   }
 
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setHasOptionsMenu(true)
   }
-
-//  override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//    super.onCreateOptionsMenu(menu, inflater)
-//    menu.clear()
-//  }
 
   companion object {
     fun newInstance() = AboutFragment()

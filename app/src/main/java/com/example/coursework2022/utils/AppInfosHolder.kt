@@ -15,7 +15,7 @@ class AppInfosHolder @Inject constructor(
   @ApplicationContext
   private val context: Context
 ) {
-  private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+  private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   private val appsList: MutableList<String> = mutableListOf()
   private val appIconByPackageName: MutableMap<String, Drawable?> = mutableMapOf()

@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import com.example.coursework2022.MainActivity
 import com.example.coursework2022.PreferenceStorage
 import com.example.coursework2022.R
+import com.example.coursework2022.features.schedules.ScheduleModelsHolder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,9 @@ class DetectionService : AccessibilityService() {
 
   @Inject
   lateinit var preferenceStorage: PreferenceStorage
+
+  @Inject
+  lateinit var scheduleModelsHolder: ScheduleModelsHolder
 
   private var isForeground = false
 
@@ -49,6 +53,9 @@ class DetectionService : AccessibilityService() {
   }
 
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
+//    if (scheduleModelsHolder.getSchedules().any { it.isGoingNow() }) {
+//      preferenceStorage.setFocusModeStatus(true)
+//    }
     val focusModeOn = preferenceStorage.getFocusModeStatus()
     if (focusModeOn && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
       event.packageName?.toString()?.let { killAppIfInBlacklist(it) }
@@ -67,9 +74,9 @@ class DetectionService : AccessibilityService() {
         }
       val notification = Notification.Builder(this, createNotificationChannel())
         .apply {
-          setContentTitle("my service")
-          setContentText("focus mode is on")
-          setSmallIcon(R.drawable.ic_baseline_apps_24)
+          setContentTitle("UsageManager")
+          setContentText("FocusMode is active")
+          setSmallIcon(R.drawable.ic_launcher)
           setContentIntent(pendingIntent)
         }.build()
       startForeground(NOTIFICATION_ID, notification)
