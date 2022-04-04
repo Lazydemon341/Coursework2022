@@ -1,5 +1,6 @@
 package com.example.coursework2022.features.schedules
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +10,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coursework2022.R
 import com.example.coursework2022.features.schedules.SchedulesAdapter.ViewHolder
+import com.example.coursework2022.utils.format
 import com.example.coursework2022.utils.getShortWeekdayName
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SchedulesAdapter : ListAdapter<ScheduleModel, ViewHolder>(DiffCallback) {
 
   private var onSwitchClick: ((ScheduleModel, Boolean) -> Unit)? = null
+  private var onScheduleClick: ((ScheduleModel) -> Unit)? = null
 
   init {
     setHasStableIds(true)
@@ -22,6 +25,10 @@ class SchedulesAdapter : ListAdapter<ScheduleModel, ViewHolder>(DiffCallback) {
 
   fun setOnSwitchClickListener(listener: (ScheduleModel, Boolean) -> Unit) {
     onSwitchClick = listener
+  }
+
+  fun setOnScheduleClickListener(listener: (ScheduleModel) -> Unit) {
+    onScheduleClick = listener
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -44,20 +51,28 @@ class SchedulesAdapter : ListAdapter<ScheduleModel, ViewHolder>(DiffCallback) {
   }
 
   inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    private val name: TextView = view.findViewById(R.id.schedule_name)
     private val days: TextView = view.findViewById(R.id.schedule_days)
     private val time: TextView = view.findViewById(R.id.schedule_time)
     private val switch: SwitchMaterial = view.findViewById(R.id.schedule_switch)
 
+    @SuppressLint("SetTextI18n")
     fun bind(data: ScheduleModel) {
-      days.text = data.daysOfWeek.joinToString(separator = ",") { getShortWeekdayName(it.value) }
+      name.text = data.name
+      days.text = data.daysOfWeek.joinToString(separator = ", ") { getShortWeekdayName(it.value) }
+      time.text = "${data.startTime.format()} to ${data.endTime.format()}"
       switch.isChecked = data.active
       switch.setOnCheckedChangeListener { _, isChecked ->
         onSwitchClick?.invoke(data, isChecked)
+      }
+      view.setOnClickListener {
+        onScheduleClick?.invoke(data)
       }
     }
 
     fun unbind() {
       switch.setOnClickListener(null)
+      view.setOnClickListener(null)
     }
   }
 

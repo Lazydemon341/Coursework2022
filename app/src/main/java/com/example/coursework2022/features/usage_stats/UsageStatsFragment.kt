@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UsageStatsFragment : Fragment(R.layout.fragment_app_usage_statistics) {
+class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
 
   @Inject
   lateinit var pieChartBuilder: PieChartBuilder

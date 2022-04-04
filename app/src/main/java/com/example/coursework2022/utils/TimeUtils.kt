@@ -1,6 +1,7 @@
 package com.example.coursework2022.utils
 
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Calendar
 
@@ -52,6 +53,12 @@ fun getShortWeekdayMinusDaysName(minusDays: Int): String {
   val c = Calendar.getInstance()
   c.add(Calendar.DAY_OF_YEAR, -minusDays)
   return String.format("%ta", c)
+}
+
+fun LocalTime.format(): String {
+  val hours = if (hour >= 10) hour else "0$hour"
+  val minutes = if (minute >= 10) minute else "0$minute"
+  return "$hours:$minutes"
 }
 
 fun formatTime(seconds: Long): String {

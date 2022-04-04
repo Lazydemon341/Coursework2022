@@ -25,4 +25,10 @@ class SchedulesViewModel @Inject constructor(
       scheduleModelsHolder.toggleSchedule(schedule, isActive)
     }
   }
+
+  fun removeSchedule(schedule: ScheduleModel) {
+    viewModelScope.launch(Dispatchers.Default) {
+      scheduleModelsHolder.removeSchedule(schedule)
+    }
+  }
 }

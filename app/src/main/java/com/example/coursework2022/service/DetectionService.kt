@@ -18,6 +18,7 @@ import com.example.coursework2022.MainActivity
 import com.example.coursework2022.PreferenceStorage
 import com.example.coursework2022.R
 import com.example.coursework2022.features.schedules.ScheduleModelsHolder
+import com.example.coursework2022.features.schedules.isGoingNow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ class DetectionService : AccessibilityService() {
   lateinit var scheduleModelsHolder: ScheduleModelsHolder
 
   private var isForeground = false
+  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     return Service.START_STICKY
@@ -45,17 +47,21 @@ class DetectionService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+    scope.launch {
       preferenceStorage.focusModeStatusFlow.collect {
         updateForeground(it)
+      }
+    }
+    scope.launch {
+      scheduleModelsHolder.scheduleModelsFlow.collect { schedules ->
+        if (schedules.any { it.isGoingNow() }) {
+          preferenceStorage.setFocusModeStatus(true)
+        }
       }
     }
   }
 
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
-//    if (scheduleModelsHolder.getSchedules().any { it.isGoingNow() }) {
-//      preferenceStorage.setFocusModeStatus(true)
-//    }
     val focusModeOn = preferenceStorage.getFocusModeStatus()
     if (focusModeOn && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
       event.packageName?.toString()?.let { killAppIfInBlacklist(it) }

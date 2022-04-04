@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.datetime.timePicker
+import com.afollestad.materialdialogs.list.listItems
 import com.afollestad.materialdialogs.list.listItemsMultiChoice
 import com.example.coursework2022.R
 import com.example.coursework2022.utils.getShortWeekdayNames
@@ -39,6 +40,7 @@ class SchedulesFragment : Fragment(R.layout.fragment_schedules) {
       it.setOnSwitchClickListener { schedule, active ->
         viewModel.toggleSchedule(schedule, active)
       }
+      it.setOnScheduleClickListener(::showDialogOnScheduleClick)
       schedulesAdapter = it
     }
 
@@ -60,7 +62,8 @@ class SchedulesFragment : Fragment(R.layout.fragment_schedules) {
   @SuppressLint("CheckResult")
   private fun pickDaysOfWeek() {
     MaterialDialog(requireContext()).show {
-      listItemsMultiChoice(items = getShortWeekdayNames(), allowEmptySelection = false) { _, indexes, texts ->
+      title(text = "Select days of week")
+      listItemsMultiChoice(items = getShortWeekdayNames(), allowEmptySelection = false) { _, indexes, _ ->
         viewModel.currentModel = viewModel.currentModel.copy(daysOfWeek = indexes.map { DayOfWeek.of(it + 1) })
       }
       positiveButton(text = "Next") {
@@ -71,6 +74,7 @@ class SchedulesFragment : Fragment(R.layout.fragment_schedules) {
 
   private fun pickStartTime() {
     MaterialDialog(requireContext()).show {
+      title(text = "Select start time")
       timePicker(show24HoursView = true) { _, calendar ->
         viewModel.currentModel = viewModel.currentModel.copy(
           startTime = LocalTime.of(
@@ -86,6 +90,7 @@ class SchedulesFragment : Fragment(R.layout.fragment_schedules) {
 
   private fun pickEndTime(calendar: Calendar) {
     MaterialDialog(requireContext()).show {
+      title(text = "Select end time")
       timePicker(currentTime = calendar, requireFutureTime = true, show24HoursView = true) { _, calendar ->
         viewModel.currentModel = viewModel.currentModel.copy(
           endTime = LocalTime.of(
@@ -96,6 +101,23 @@ class SchedulesFragment : Fragment(R.layout.fragment_schedules) {
       }
       positiveButton(text = "Save") {
         viewModel.saveCurrentSchedule()
+      }
+    }
+  }
+
+  @SuppressLint("CheckResult")
+  private fun showDialogOnScheduleClick(schedule: ScheduleModel) {
+    MaterialDialog(requireContext()).show {
+      title(text = "Schedule \"${schedule.name}\"")
+      listItems(items = listOf("Edit", "Delete")) { _, index, _ ->
+        when (index) {
+          1 -> {
+            viewModel.removeSchedule(schedule)
+          }
+          else -> {
+            // no-op
+          }
+        }
       }
     }
   }

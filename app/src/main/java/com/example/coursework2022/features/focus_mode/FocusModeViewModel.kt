@@ -3,6 +3,8 @@ package com.example.coursework2022.features.focus_mode
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coursework2022.PreferenceStorage
+import com.example.coursework2022.features.schedules.ScheduleModel
+import com.example.coursework2022.features.schedules.ScheduleModelsHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,10 +16,17 @@ import javax.inject.Inject
 @HiltViewModel
 class FocusModeViewModel @Inject constructor(
   private val preferenceStorage: PreferenceStorage,
-  private val focusModeInteractor: FocusModeInteractor
+  private val focusModeInteractor: FocusModeInteractor,
+  private val scheduleModelsHolder: ScheduleModelsHolder
 ) : ViewModel() {
 
   private val appsList = focusModeInteractor.getAppsList()
+
+  val schedulesFlow = scheduleModelsHolder.scheduleModelsFlow
+    .map { schedules ->
+      schedules.filter { it.active }
+    }
+    .flowOn(Dispatchers.IO)
 
   val focusModeStatusFlow = preferenceStorage.focusModeStatusFlow
 
@@ -60,5 +69,11 @@ class FocusModeViewModel @Inject constructor(
 
   fun getFocusModeStatus(): Boolean {
     return preferenceStorage.getFocusModeStatus()
+  }
+
+  fun toggleSchedule(schedule: ScheduleModel, isActive: Boolean) {
+    viewModelScope.launch(Dispatchers.Default) {
+      scheduleModelsHolder.toggleSchedule(schedule, isActive)
+    }
   }
 }

@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/schedules_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,6 +13,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       >
+
     <TextView
         android:id="@+id/schedules_title"
         android:layout_width="wrap_content"
@@ -26,6 +28,16 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/schedules_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/schedules_title"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_schedule"
+        />
+
     <Button
         android:id="@+id/schedules_button"
         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -33,11 +45,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Edit schedules"
         android:textColor="@color/black"
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/schedules_title"
+        app:layout_constraintTop_toBottomOf="@id/schedules_list"
+        tools:text="Edit schedules"
         />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -11,9 +11,6 @@ import com.example.coursework2022.features.usage_stats.AppUsageInfo
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.RIGHT
-import com.github.mikephil.charting.components.Legend.LegendOrientation.VERTICAL
-import com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -47,13 +44,7 @@ class PieChartBuilder @Inject constructor() {
 
     chart.setEntryLabelColor(Color.BLACK)
 
-    chart.legend.apply {
-      verticalAlignment = TOP
-      horizontalAlignment = RIGHT
-      orientation = VERTICAL
-      textSize = 13f
-      setDrawInside(false)
-    }
+    chart.legend.isEnabled = false
   }
 
   private fun generateCenterText(appUsageInfos: List<AppUsageInfo>): SpannableString {

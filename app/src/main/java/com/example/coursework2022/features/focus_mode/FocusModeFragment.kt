@@ -22,8 +22,10 @@ import com.example.coursework2022.MainActivity
 import com.example.coursework2022.R
 import com.example.coursework2022.R.layout
 import com.example.coursework2022.ViewPagerFragment
+import com.example.coursework2022.features.schedules.SchedulesAdapter
 import com.example.coursework2022.utils.isAccessibilitySettingsOn
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.recyclerview.animators.FadeInAnimator
 import jp.wasabeef.recyclerview.animators.FadeInDownAnimator
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
@@ -155,6 +157,24 @@ class FocusModeFragment : Fragment(layout.focus_mode_fragment) {
     schedulesButton = view.findViewById(R.id.schedules_button)
     schedulesButton.setOnClickListener {
       (requireActivity() as MainActivity).openSchedules()
+    }
+
+    val schedulesList = view.findViewById<RecyclerView>(R.id.schedules_list)
+    schedulesList.itemAnimator = FadeInAnimator()
+    val adapter = SchedulesAdapter().also {
+      it.setOnSwitchClickListener { schedule, active ->
+        viewModel.toggleSchedule(schedule, active)
+      }
+    }
+    schedulesList.adapter = adapter
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewModel.schedulesFlow.collect {
+          schedulesButton.text = if (it.isEmpty()) "Add schedules" else "Edit schedules"
+          adapter.submitList(it)
+        }
+      }
     }
   }
 

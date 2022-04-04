@@ -6,6 +6,7 @@ import java.util.UUID
 
 data class ScheduleModel(
   val uuid: UUID = UUID.randomUUID(),
+  val name: String = "",
   val startTime: LocalTime = LocalTime.MAX,
   val endTime: LocalTime = LocalTime.MIDNIGHT,
   val daysOfWeek: List<DayOfWeek> = emptyList(),
