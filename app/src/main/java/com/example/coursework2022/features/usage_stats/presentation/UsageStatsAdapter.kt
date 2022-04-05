@@ -1,4 +1,4 @@
-package com.example.coursework2022.features.usage_stats
+package com.example.coursework2022.features.usage_stats.presentation
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -11,11 +11,22 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.coursework2022.R
-import com.example.coursework2022.features.usage_stats.UsageStatsAdapter.ViewHolder
+import com.example.coursework2022.features.usage_stats.UsageStatsModel
+import com.example.coursework2022.features.usage_stats.presentation.UsageStatsAdapter.ViewHolder
 import com.example.coursework2022.utils.formatTime
 import com.example.coursework2022.utils.getQuantityString
 
-class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
+class UsageStatsAdapter : ListAdapter<UsageStatsModel, ViewHolder>(DiffCallback) {
+
+  init {
+    setHasStableIds(true)
+  }
+
+  private var onAppClickListener: ((UsageStatsModel) -> Unit)? = null
+
+  fun setOnAppClickListener(listener: (UsageStatsModel) -> Unit) {
+    onAppClickListener = listener
+  }
 
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
     return ViewHolder(LayoutInflater.from(viewGroup.context).inflate(R.layout.item_app_usage, viewGroup, false))
@@ -23,6 +34,11 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
     holder.bind(getItem(position))
+  }
+
+  override fun onViewDetachedFromWindow(holder: ViewHolder) {
+    super.onViewDetachedFromWindow(holder)
+    holder.unbind()
   }
 
   override fun getItemId(position: Int): Long {
@@ -36,21 +52,28 @@ class UsageStatsAdapter : ListAdapter<AppUsageInfo, ViewHolder>(DiffCallback) {
     private val appIcon: ImageView = view.findViewById(R.id.app_image)
 
     @SuppressLint("SetTextI18n")
-    fun bind(data: AppUsageInfo) {
+    fun bind(data: UsageStatsModel) {
       appName.text = data.appLabel
       usage.text = formatTime(data.usageTimeSeconds)
       launchCount.text = view.context.getQuantityString(R.plurals.times_launched, data.launchesCount)
       Glide.with(view)
         .load(data.appIcon)
         .into(appIcon)
+      view.setOnClickListener {
+        onAppClickListener?.invoke(data)
+      }
+    }
+
+    fun unbind() {
+      view.setOnClickListener(null)
     }
   }
 
-  private object DiffCallback : DiffUtil.ItemCallback<AppUsageInfo>() {
-    override fun areItemsTheSame(oldItem: AppUsageInfo, newItem: AppUsageInfo): Boolean =
+  private object DiffCallback : DiffUtil.ItemCallback<UsageStatsModel>() {
+    override fun areItemsTheSame(oldItem: UsageStatsModel, newItem: UsageStatsModel): Boolean =
       oldItem.packageName == newItem.packageName
 
-    override fun areContentsTheSame(oldItem: AppUsageInfo, newItem: AppUsageInfo): Boolean =
+    override fun areContentsTheSame(oldItem: UsageStatsModel, newItem: UsageStatsModel): Boolean =
       oldItem == newItem
   }
 }

@@ -38,7 +38,9 @@ class AppInfosHolder @Inject constructor(
   }
 
   fun getAppIcon(packageName: String): Drawable? {
-    return appIconByPackageName[packageName] ?: appIcon(packageName)
+    return appIconByPackageName[packageName] ?: appIcon(packageName).also {
+      appIconByPackageName[packageName] = it
+    }
   }
 
   fun getAppsList(): List<String> {

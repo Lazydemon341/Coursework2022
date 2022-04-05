@@ -34,6 +34,9 @@ fun Context.getAppsList(): List<ResolveInfo> {
     .distinctBy {
       it.activityInfo.packageName
     }
+    .filter {
+      it.activityInfo.packageName != packageName
+    }
 }
 
 fun Context.isPermissionGranted(permission: String): Boolean =

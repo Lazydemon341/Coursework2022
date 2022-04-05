@@ -1,16 +1,19 @@
-package com.example.coursework2022
+package com.example.coursework2022.features
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.coursework2022.R
+import com.example.coursework2022.R.dimen
+import com.example.coursework2022.R.layout
 import com.example.coursework2022.features.focus_mode.FocusModeFragment
-import com.example.coursework2022.features.usage_stats.UsageStatsFragment
+import com.example.coursework2022.features.usage_stats.presentation.UsageStatsFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
+class ViewPagerFragment : Fragment(layout.fragment_pager) {
 
   private lateinit var tabLayout: TabLayout
 
@@ -32,7 +35,7 @@ class ViewPagerFragment : Fragment(R.layout.fragment_pager) {
 
   fun updateTabLayoutShadow(show: Boolean) {
     tabLayout.elevation = if (show) {
-      requireContext().resources.getDimension(R.dimen.margin_small)
+      requireContext().resources.getDimension(dimen.margin_small)
     } else {
       0f
     }

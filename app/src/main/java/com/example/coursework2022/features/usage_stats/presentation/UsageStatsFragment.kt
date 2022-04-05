@@ -1,4 +1,4 @@
-package com.example.coursework2022.features.usage_stats
+package com.example.coursework2022.features.usage_stats.presentation
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -8,7 +8,9 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -21,12 +23,19 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import com.afollestad.materialdialogs.LayoutMode.WRAP_CONTENT
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.BottomSheet
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.example.coursework2022.R
-import com.example.coursework2022.ViewPagerFragment
 import com.example.coursework2022.charts.BarChartBuilder
 import com.example.coursework2022.charts.PieChartBuilder
-import com.example.coursework2022.features.usage_stats.StatsUsageInterval.DAILY
-import com.example.coursework2022.features.usage_stats.StatsUsageInterval.WEEKLY
+import com.example.coursework2022.features.ViewPagerFragment
+import com.example.coursework2022.features.usage_stats.UsageStatsInterval
+import com.example.coursework2022.features.usage_stats.UsageStatsInterval.DAILY
+import com.example.coursework2022.features.usage_stats.UsageStatsInterval.WEEKLY
+import com.example.coursework2022.features.usage_stats.UsageStatsModel
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -34,7 +43,9 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.reflect.Field
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
@@ -94,7 +105,6 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
     mRecyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
     mRecyclerView.layoutManager = LinearLayoutManager(requireContext()).also { mLayoutManager = it }
     mUsageListAdapter = UsageStatsAdapter().apply {
-      setHasStableIds(true)
       registerAdapterDataObserver(object : AdapterDataObserver() {
         override fun onChanged() {
           mRecyclerView.scrollToPosition(0)
@@ -120,6 +130,9 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
           mRecyclerView.scrollToPosition(0)
         }
       })
+      setOnAppClickListener {
+        openUsageLimitPicker(it)
+      }
     }
     mRecyclerView.adapter = mUsageListAdapter
     mRecyclerView.itemAnimator = object : DefaultItemAnimator() {
@@ -139,6 +152,43 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
     }
   }
 
+  @SuppressLint("DiscouragedPrivateApi")
+  private fun openUsageLimitPicker(model: UsageStatsModel) {
+    val dialog = MaterialDialog(requireContext(), BottomSheet(WRAP_CONTENT))
+      .customView(viewRes = R.layout.app_usage_limit)
+      .icon(drawable = model.appIcon)
+      .title(text = "Usage limit")
+      .positiveButton()
+      .negativeButton()
+
+    dialog.getCustomView().findViewById<NumberPicker>(R.id.usage_limit_hrs_picker).apply {
+      wrapSelectorWheel = false
+      minValue = 0
+      maxValue = 12
+      setFormatter { "$it hr" }
+      value = model.usageLimitHours
+
+      val f: Field = NumberPicker::class.java.getDeclaredField("mInputText")
+      f.isAccessible = true
+      val editText: EditText = f.get(this) as EditText
+      editText.filters = arrayOfNulls(0)
+    }
+
+    dialog.getCustomView().findViewById<NumberPicker>(R.id.usage_limit_mins_picker).apply {
+      wrapSelectorWheel = false
+      minValue = 1
+      maxValue = 12
+      setFormatter { "${it * 5} min" }
+
+      val f: Field = NumberPicker::class.java.getDeclaredField("mInputText")
+      f.isAccessible = true
+      val editText: EditText = f.get(this) as EditText
+      editText.filters = arrayOfNulls(0)
+    }
+
+    dialog.show()
+  }
+
   private fun setupToggleButton(view: View) {
     weeklyUsageTime = view.findViewById(R.id.weekly_usage_time)
 
@@ -152,7 +202,7 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
     toggleButton.addOnButtonCheckedListener { _, idRes, checked ->
       if (checked) {
         val button = view.findViewById<Button>(idRes)
-        StatsUsageInterval.getValue(requireContext(), button.text.toString())?.let {
+        UsageStatsInterval.getValue(requireContext(), button.text.toString())?.let {
           viewModel.getUsageStats(it)
           when (it) {
             DAILY -> {

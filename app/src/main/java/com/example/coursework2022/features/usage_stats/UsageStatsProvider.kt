@@ -3,7 +3,7 @@ package com.example.coursework2022.features.usage_stats
 import android.app.usage.UsageEvents.Event
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import com.example.coursework2022.features.usage_stats.StatsUsageInterval.DAILY
+import com.example.coursework2022.features.usage_stats.UsageStatsInterval.DAILY
 import com.example.coursework2022.utils.AppInfosHolder
 import com.example.coursework2022.utils.getAppsList
 import com.example.coursework2022.utils.getMidnightUtcMinusDays
@@ -26,15 +26,15 @@ class UsageStatsProvider @Inject constructor(
 
   private val usageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
   private val mainPackageNames = context.getAppsList().map { it.activityInfo.packageName }
-  private val usageStatsByInterval: MutableMap<StatsUsageInterval, List<AppUsageInfo>> = mutableMapOf()
+  private val usageStatsByInterval: MutableMap<UsageStatsInterval, List<UsageStatsModel>> = mutableMapOf()
   private val weekUsageTime: ArrayList<Long> = arrayListOf()
-  private val usageStatsWeek: ArrayList<List<AppUsageInfo>> = arrayListOf()
+  private val usageStatsWeek: ArrayList<List<UsageStatsModel>> = arrayListOf()
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   fun init() {
     scope.launch {
-      StatsUsageInterval.values().forEach {
+      UsageStatsInterval.values().forEach {
         getAndSaveUsageStats(it)
       }
     }
@@ -50,7 +50,7 @@ class UsageStatsProvider @Inject constructor(
     return weekUsageTime
   }
 
-  suspend fun getUsageStats(interval: StatsUsageInterval): List<AppUsageInfo> {
+  suspend fun getUsageStats(interval: UsageStatsInterval): List<UsageStatsModel> {
     val savedUsageStats = usageStatsByInterval[interval]
     return if (savedUsageStats.isNullOrEmpty()) {
       getAndSaveUsageStats(interval)
@@ -59,7 +59,7 @@ class UsageStatsProvider @Inject constructor(
     }
   }
 
-  private suspend fun getAndSaveUsageStats(interval: StatsUsageInterval): List<AppUsageInfo> {
+  private suspend fun getAndSaveUsageStats(interval: UsageStatsInterval): List<UsageStatsModel> {
     return withContext(Dispatchers.Default) {
       getUsageStatsInternal(interval.getStartTime(), interval.getEndTime())
         .also {
@@ -68,7 +68,7 @@ class UsageStatsProvider @Inject constructor(
     }
   }
 
-  private fun getUsageStatsInternal(startTime: Long, endTime: Long): List<AppUsageInfo> {
+  private fun getUsageStatsInternal(startTime: Long, endTime: Long): List<UsageStatsModel> {
     var currentEvent: Event
     val usageEvents: MutableList<Event> = ArrayList()
     val appUsageMap: MutableMap<String, UsageTimeAndLaunches> = mutableMapOf()
@@ -129,11 +129,11 @@ class UsageStatsProvider @Inject constructor(
     return appUsageMap
       .map {
         val value = it.value
-        AppUsageInfo(
+        UsageStatsModel(
           packageName = it.key,
           usageTimeSeconds = value.usageTimeSeconds,
           lastTimeUsedMillis = value.lastTimeUsed,
-          launchesCount = value.launchesCount,
+          launchesCount = value.launchesCount / 3,
           appLabel = appInfosHolder.getAppLabel(it.key),
           appIcon = appInfosHolder.getAppIcon(it.key)
         )

@@ -52,7 +52,6 @@ dependencies {
   implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
   implementation "androidx.preference:preference-ktx:1.2.0"
 
-
   // navigation
   implementation "androidx.navigation:navigation-fragment-ktx:2.4.1"
   implementation "androidx.navigation:navigation-ui-ktx:2.4.1"
@@ -75,6 +74,7 @@ dependencies {
   def materialDialogsVersion = "3.3.0"
   implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
   implementation "com.afollestad.material-dialogs:datetime:$materialDialogsVersion"
+  implementation "com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion"
 
   // androidx lifecycle
   def lifecycleVersion = "2.4.1"

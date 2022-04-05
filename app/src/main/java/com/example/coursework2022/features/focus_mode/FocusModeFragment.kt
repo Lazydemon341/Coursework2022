@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.coursework2022.MainActivity
 import com.example.coursework2022.R
 import com.example.coursework2022.R.layout
-import com.example.coursework2022.ViewPagerFragment
+import com.example.coursework2022.features.ViewPagerFragment
 import com.example.coursework2022.features.schedules.SchedulesAdapter
 import com.example.coursework2022.utils.isAccessibilitySettingsOn
 import dagger.hilt.android.AndroidEntryPoint

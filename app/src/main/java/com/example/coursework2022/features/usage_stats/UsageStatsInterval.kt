@@ -7,7 +7,7 @@ import com.example.coursework2022.R
 import com.example.coursework2022.utils.getLastMidnightUTC
 import com.example.coursework2022.utils.getNextMidnightUTC
 
-enum class StatsUsageInterval(@StringRes val titleId: Int) {
+enum class UsageStatsInterval(@StringRes val titleId: Int) {
   DAILY(R.string.interval_daily),
   WEEKLY(R.string.interval_weekly);
 
@@ -26,7 +26,7 @@ enum class StatsUsageInterval(@StringRes val titleId: Int) {
   }
 
   companion object {
-    fun getValue(context: Context, title: String): StatsUsageInterval? {
+    fun getValue(context: Context, title: String): UsageStatsInterval? {
       return values().firstOrNull { context.resources.getString(it.titleId) == title }
     }
   }

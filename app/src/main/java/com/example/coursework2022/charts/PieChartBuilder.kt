@@ -7,7 +7,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import androidx.core.graphics.drawable.toBitmap
-import com.example.coursework2022.features.usage_stats.AppUsageInfo
+import com.example.coursework2022.features.usage_stats.UsageStatsModel
 import com.example.coursework2022.utils.formatTime
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -46,13 +46,13 @@ class PieChartBuilder @Inject constructor() {
     chart.holeRadius = 44f
     chart.transparentCircleRadius = 50f
 
-    chart.setEntryLabelColor(Color.BLACK)
+    chart.setEntryLabelColor(Color.WHITE)
 
     chart.legend.isEnabled = false
   }
 
-  private fun generateCenterText(appUsageInfos: List<AppUsageInfo>): SpannableString {
-    val totalSeconds = appUsageInfos.sumOf { it.usageTimeSeconds }
+  private fun generateCenterText(usageStatsModels: List<UsageStatsModel>): SpannableString {
+    val totalSeconds = usageStatsModels.sumOf { it.usageTimeSeconds }
     val subtitle = "this day"
     val spanSource = "${formatTime(totalSeconds)}\n$subtitle"
     val i = spanSource.indexOf(subtitle)
@@ -62,12 +62,12 @@ class PieChartBuilder @Inject constructor() {
     return s
   }
 
-  fun updateData(resources: Resources, chart: PieChart, appUsageInfos: List<AppUsageInfo>) {
+  fun updateData(resources: Resources, chart: PieChart, usageStatsModels: List<UsageStatsModel>) {
     CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
       val entries1 = ArrayList<PieEntry>()
-      val other = ArrayList<AppUsageInfo>()
+      val other = ArrayList<UsageStatsModel>()
 
-      for ((i, appUsageInfo) in appUsageInfos.withIndex()) {
+      for ((i, appUsageInfo) in usageStatsModels.withIndex()) {
         if (i < 4) {
           entries1.add(PieEntry(appUsageInfo.usageTimeSeconds.toFloat()).apply {
             data = appUsageInfo
@@ -92,7 +92,7 @@ class PieChartBuilder @Inject constructor() {
       ds1.setDrawValues(false)
 
       chart.data = PieData(ds1)
-      chart.centerText = generateCenterText(appUsageInfos)
+      chart.centerText = generateCenterText(usageStatsModels)
 
       launch(Dispatchers.Main) {
         chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCirc)

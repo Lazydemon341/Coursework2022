@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.coursework2022.features.ViewPagerFragment
 import com.example.coursework2022.features.about.AboutFragment
 import com.example.coursework2022.features.schedules.SchedulesFragment
 import com.example.coursework2022.features.usage_stats.UsageStatsProvider
