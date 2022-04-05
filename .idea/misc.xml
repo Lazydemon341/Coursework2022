@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/fragment_app_usage_statistics.xml" value="0.2444938989089149" />
         <entry key="app/src/main/res/layout/fragment_pager.xml" value="0.189209726443769" />
         <entry key="app/src/main/res/layout/fragment_schedules.xml" value="0.33065750910518377" />
+        <entry key="app/src/main/res/layout/fragment_usage_stats.xml" value="0.19630192502532928" />
         <entry key="app/src/main/res/layout/item_app_usage.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/item_focus_mode_app.xml" value="0.13677811550151975" />
         <entry key="app/src/main/res/layout/item_schedule.xml" value="0.17958459979736577" />

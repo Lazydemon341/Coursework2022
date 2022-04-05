@@ -16,6 +16,10 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.scopes.FragmentScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -59,37 +63,40 @@ class PieChartBuilder @Inject constructor() {
   }
 
   fun updateData(resources: Resources, chart: PieChart, appUsageInfos: List<AppUsageInfo>) {
-    // TODO: move from ui thread
-    val entries1 = ArrayList<PieEntry>()
-    val other = ArrayList<AppUsageInfo>()
-    val totalTime = appUsageInfos.sumOf { it.usageTimeSeconds }.toFloat()
+    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+      val entries1 = ArrayList<PieEntry>()
+      val other = ArrayList<AppUsageInfo>()
 
-    for ((i, appUsageInfo) in appUsageInfos.withIndex()) {
-      if (i < 4) {
-        entries1.add(PieEntry(appUsageInfo.usageTimeSeconds.toFloat()).apply {
-          data = appUsageInfo
-          label = ""
+      for ((i, appUsageInfo) in appUsageInfos.withIndex()) {
+        if (i < 4) {
+          entries1.add(PieEntry(appUsageInfo.usageTimeSeconds.toFloat()).apply {
+            data = appUsageInfo
+            label = ""
 
-          val bitmap = (appUsageInfo.appIcon)?.toBitmap(108, 108)
-          icon = BitmapDrawable(resources, bitmap)
-        })
-      } else {
-        other.add(appUsageInfo)
+            val bitmap = (appUsageInfo.appIcon)?.toBitmap(108, 108)
+            icon = BitmapDrawable(resources, bitmap)
+          })
+        } else {
+          other.add(appUsageInfo)
+        }
+      }
+
+      val otherTime = other.sumOf { it.usageTimeSeconds }.toFloat()
+      entries1.add(PieEntry(otherTime).apply {
+        label = "Other"
+      })
+
+      val ds1 = PieDataSet(entries1, "")
+      ds1.setColors(*COLOR_TEMPLATE)
+      ds1.sliceSpace = 4f
+      ds1.setDrawValues(false)
+
+      chart.data = PieData(ds1)
+      chart.centerText = generateCenterText(appUsageInfos)
+
+      launch(Dispatchers.Main) {
+        chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCirc)
       }
     }
-
-    val otherTime = other.sumOf { it.usageTimeSeconds }.toFloat()
-    entries1.add(PieEntry(otherTime).apply {
-      label = "Other"
-    })
-
-    val ds1 = PieDataSet(entries1, "")
-    ds1.setColors(*COLOR_TEMPLATE)
-    ds1.sliceSpace = 4f
-    ds1.setDrawValues(false)
-
-    chart.data = PieData(ds1)
-    chart.centerText = generateCenterText(appUsageInfos)
-    chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCirc)
   }
 }

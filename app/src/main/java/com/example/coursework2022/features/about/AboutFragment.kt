@@ -1,5 +1,9 @@
 package com.example.coursework2022.features.about
 
+import android.graphics.Bitmap
+import android.graphics.Bitmap.Config
+import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +21,12 @@ class AboutFragment : Fragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View {
+    val cover = Bitmap.createBitmap(200, 200, Config.ARGB_8888).also {
+      Canvas(it).drawColor(Color.parseColor("#64dd17"))
+    }
     return AboutBuilder.with(requireContext())
       .setPhoto(R.drawable.photo)
-      .setCover(R.mipmap.profile_cover)
+      .setCover(cover)
       .setName("Vlasyuk Alexander")
       .setSubTitle("Android developer, Moscow")
       .addEmailLink("vlas.s.341@gmail.com")

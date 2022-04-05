@@ -14,6 +14,10 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import dagger.hilt.android.scopes.FragmentScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val CHART_ANIMATION_DURATION = 350
@@ -61,16 +65,20 @@ class BarChartBuilder @Inject constructor() {
   }
 
   fun updateData(chart: BarChart, weekUsageTimes: List<Long>) {
-    val entries = ArrayList<BarEntry>()
-    for ((i, usage) in weekUsageTimes.withIndex()) {
-      entries.add(BarEntry(i.toFloat(), usage.toFloat()).apply {
-        data = i
-      })
+    CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+      val entries = ArrayList<BarEntry>()
+      for ((i, usage) in weekUsageTimes.withIndex()) {
+        entries.add(BarEntry(i.toFloat(), usage.toFloat()).apply {
+          data = i
+        })
+      }
+      val ds = BarDataSet(entries, "")
+      ds.setColors(*ColorTemplate.MATERIAL_COLORS)
+      ds.setDrawValues(false)
+      chart.data = BarData(listOf(ds))
+      launch(Dispatchers.Main) {
+        chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCubic)
+      }
     }
-    val ds = BarDataSet(entries, "")
-    ds.setColors(*ColorTemplate.MATERIAL_COLORS)
-    ds.setDrawValues(false)
-    chart.data = BarData(listOf(ds))
-    chart.animateY(CHART_ANIMATION_DURATION, Easing.EaseInCubic)
   }
 }
