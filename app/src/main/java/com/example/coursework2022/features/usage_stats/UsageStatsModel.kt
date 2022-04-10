@@ -8,7 +8,5 @@ data class UsageStatsModel(
   val launchesCount: Int = 0,
   val lastTimeUsedMillis: Long? = null,
   val appLabel: String = "",
-  val appIcon: Drawable? = null,
-  val usageLimitHours: Int = 0,
-  val usageLimitMins: Int = 0
+  val appIcon: Drawable? = null
 )

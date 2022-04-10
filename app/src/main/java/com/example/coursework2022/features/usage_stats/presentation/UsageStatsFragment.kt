@@ -59,9 +59,9 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
   private val viewModel: UsageStatsViewModel by viewModels()
 
   private lateinit var viewPagerFragment: ViewPagerFragment
-  private lateinit var mUsageListAdapter: UsageStatsAdapter
-  private lateinit var mRecyclerView: RecyclerView
-  private lateinit var mLayoutManager: RecyclerView.LayoutManager
+  private lateinit var usageListAdapter: UsageStatsAdapter
+  private lateinit var recyclerView: RecyclerView
+  private lateinit var layoutManager: RecyclerView.LayoutManager
   private lateinit var toggleButton: MaterialButtonToggleGroup
   private lateinit var scrollView: NestedScrollView
   private lateinit var scrollIndicator: ImageView
@@ -102,50 +102,50 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
   }
 
   private fun setupList(view: View) {
-    mRecyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
-    mRecyclerView.layoutManager = LinearLayoutManager(requireContext()).also { mLayoutManager = it }
-    mUsageListAdapter = UsageStatsAdapter().apply {
+    recyclerView = view.findViewById<View>(R.id.recyclerview_app_usage) as RecyclerView
+    recyclerView.layoutManager = LinearLayoutManager(requireContext()).also { layoutManager = it }
+    usageListAdapter = UsageStatsAdapter().apply {
       registerAdapterDataObserver(object : AdapterDataObserver() {
         override fun onChanged() {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
 
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
 
         override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
 
         override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
 
         override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
-          mRecyclerView.scrollToPosition(0)
+          recyclerView.scrollToPosition(0)
         }
       })
       setOnAppClickListener {
         openUsageLimitPicker(it)
       }
     }
-    mRecyclerView.adapter = mUsageListAdapter
-    mRecyclerView.itemAnimator = object : DefaultItemAnimator() {
+    recyclerView.adapter = usageListAdapter
+    recyclerView.itemAnimator = object : DefaultItemAnimator() {
       override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean {
         return true
       }
     }
-    mRecyclerView.scrollToPosition(0)
+    recyclerView.scrollToPosition(0)
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         viewModel.usageStatsModelsFlow.collect {
-          mUsageListAdapter.submitList(it)
+          usageListAdapter.submitList(it)
           pieChartBuilder.updateData(requireContext().resources, pieChart, it)
         }
       }
@@ -166,7 +166,6 @@ class UsageStatsFragment : Fragment(R.layout.fragment_usage_stats) {
       minValue = 0
       maxValue = 12
       setFormatter { "$it hr" }
-      value = model.usageLimitHours
 
       val f: Field = NumberPicker::class.java.getDeclaredField("mInputText")
       f.isAccessible = true
